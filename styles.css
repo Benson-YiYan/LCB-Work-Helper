@@ -65,6 +65,7 @@ input,select,textarea{font:inherit;color:inherit}
 .sync-pill.error{background:var(--red-soft);color:var(--red);border-color:#f4c7c3;cursor:pointer}
 .sync-pill.error:hover{background:#fde3e0}
 .err{color:var(--red);font-size:13px;margin-top:10px;min-height:18px}
+.turnstile-login{min-height:65px;margin:2px 0 14px;display:flex;justify-content:center;align-items:center}
 
 /* ---------- 布局 ---------- */
 .topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(12px);

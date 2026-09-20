@@ -18,7 +18,7 @@ Deno.serve(async (request) => {
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
   if (!supabaseUrl || !publishableKey || !serviceKey) return json({ error: 'server_configuration' }, 500);
 
-  let input: { email?: string; password?: string; deviceId?: string };
+  let input: { email?: string; password?: string; deviceId?: string; captchaToken?: string };
   try {
     input = await request.json();
   } catch {
@@ -28,7 +28,10 @@ Deno.serve(async (request) => {
   const email = String(input.email || '').trim().toLowerCase();
   const password = String(input.password || '');
   const deviceId = String(input.deviceId || '').trim();
-  if (!email || !password || !deviceId || deviceId.length > 200) return json({ error: 'invalid_request' }, 400);
+  const captchaToken = String(input.captchaToken || '').trim();
+  if (!email || !password || !deviceId || !captchaToken || deviceId.length > 200 || captchaToken.length > 4096) {
+    return json({ error: 'invalid_request' }, 400);
+  }
 
   const serviceHeaders = {
     apikey: serviceKey,
@@ -52,7 +55,11 @@ Deno.serve(async (request) => {
   const authResponse = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
     method: 'POST',
     headers: { apikey: publishableKey, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      email,
+      password,
+      gotrue_meta_security: { captcha_token: captchaToken },
+    }),
   });
 
   if (authResponse.ok) {

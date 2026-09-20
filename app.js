@@ -310,6 +310,7 @@ const STR = {
   'login.password': ['密码', 'Password', 'Contraseña'],
   'login.signin': ['登录', 'Sign in', 'Iniciar sesión'],
   'login.signingIn': ['登录中…', 'Signing in…', 'Iniciando sesión…'],
+  'login.captchaRequired': ['请先完成人机验证。', 'Complete the security check first.', 'Completa primero la verificación de seguridad.'],
   'login.demoTitle': ['演示账号', 'Demo accounts', 'Cuentas de demostración'],
   'login.hint': ['用不同账号登录，可以看到权限差异：Héctor 登录后看不到任何制裁／涉美事项。',
     'Sign in with different accounts to see permissions at work: Héctor cannot see any sanctions / US matters.',
@@ -1287,6 +1288,9 @@ let loginFailures = 0;
 let loginBlockedUntil = 0;
 let loginCountdownTimer = null;
 let loginCountdownEmail = '';
+const TURNSTILE_SITE_KEY = '0x4AAAAAAE9qa19vTf_RD4DG';
+let turnstileToken = '';
+let turnstileWidgetId = null;
 let matters = REMOTE_ENABLED ? [] : (load(KEY.matters, null) || []);
 let logs = REMOTE_ENABLED ? [] : (load(KEY.logs, null) || []);
 let seq = REMOTE_ENABLED ? 0 : load(KEY.seq, 0);
@@ -1484,10 +1488,10 @@ async function revokeDevice(sessionId) {
   if(current) finishLogout(); else { await loadDevices(false); render(); }
 }
 
-async function signIn(email, password) {
+async function signIn(email, password, captchaToken) {
   const res = await fetch(SUPABASE.url + '/functions/v1/lcb-login', {
     method: 'POST', headers: { apikey: SUPABASE.key, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, deviceId:stableDeviceId() }),
+    body: JSON.stringify({ email, password, deviceId:stableDeviceId(), captchaToken }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -2243,12 +2247,30 @@ function viewLogin() {
           <label>${esc(t('login.password'))}</label>
           <input type="password" name="password" value="${esc(state.loginDraft.password)}" placeholder="••••••••" autocomplete="current-password" required>
         </div>
+        <div id="turnstile-login" class="turnstile-login" aria-label="Security verification"></div>
         <button class="btn btn-primary btn-block" type="submit">${esc(t('login.signin'))}</button>
         <div class="err">${esc(err)}</div>
       </form>
     </div>
   </div>`;
 }
+
+function renderTurnstile() {
+  const container = document.getElementById('turnstile-login');
+  if (!container || !globalThis.turnstile) return;
+  turnstileToken = '';
+  turnstileWidgetId = globalThis.turnstile.render(container, {
+    sitekey: TURNSTILE_SITE_KEY,
+    theme: 'auto',
+    callback(token) { turnstileToken = token; },
+    'expired-callback'() { turnstileToken = ''; },
+    'error-callback'() { turnstileToken = ''; },
+  });
+}
+
+globalThis.onTurnstileLoad = () => {
+  if (!currentUser()) renderTurnstile();
+};
 
 function langSwitcher(variant) {
   return `<div class="lang-switch${variant ? ' ' + variant : ''}">${LANGS.map(l =>
@@ -3458,6 +3480,8 @@ function render() {
   if (!u) {
     app.innerHTML = viewLogin();
     modalRoot.innerHTML = '';
+    turnstileWidgetId = null;
+    requestAnimationFrame(renderTurnstile);
     return;
   }
 
@@ -4747,9 +4771,16 @@ document.addEventListener('submit', async ev => {
       return;
     }
     if (Date.now() < loginBlockedUntil) { startLoginCountdown(email); return; }
+    if (!turnstileToken) {
+      state.loginError = t('login.captchaRequired');
+      render();
+      return;
+    }
     if (!setFormBusy(form, t('login.signingIn'))) return;
     try {
-      await signIn(email, pass);
+      const captchaToken = turnstileToken;
+      turnstileToken = '';
+      await signIn(email, pass, captchaToken);
       loginFailures=0; loginBlockedUntil=0;
       if (loginCountdownTimer) { clearInterval(loginCountdownTimer); loginCountdownTimer=null; }
     }
