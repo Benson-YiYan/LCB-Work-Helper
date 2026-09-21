@@ -386,7 +386,7 @@ const STR = {
   'modal.import.importing': ['导入中…', 'Importing…', 'Importando…'],
   'modal.import.result': ['已导入 {ok} 条，跳过 {bad} 条', 'Imported {ok}; skipped {bad}', 'Importados {ok}; omitidos {bad}'],
   'modal.import.invalid': ['格式不对，是否查看示例文件？', 'The format is incorrect. Would you like to view a sample file?', 'El formato no es correcto. ¿Quieres ver un archivo de ejemplo?'],
-  'modal.import.yes': ['是', 'Yes', 'Sí'],
+  'modal.import.yes': ['查看示例文件', 'View sample file', 'Ver archivo de ejemplo'],
   'modal.import.no': ['否', 'No', 'No'],
   'modal.import.sample': ['示例文件', 'Sample file', 'Archivo de ejemplo'],
   'modal.export.title': ['导出CSV表格', 'Export CSV spreadsheet', 'Exportar tabla CSV'],
@@ -3349,7 +3349,8 @@ function modalImport() {
 }
 
 function modalImportInvalid() {
-  return modalFrame(t('modal.import.title'), `<div style="font-size:14.5px;color:var(--ink-2);line-height:1.75">${esc(t('modal.import.invalid'))}</div>`, `<button class="btn" type="button" data-action="close-modal">${esc(t('modal.import.no'))}</button><button class="btn btn-primary" type="button" data-action="download-import-sample">${esc(t('modal.import.yes'))}</button>`);
+  const isClients = state.modal && state.modal.importKind === 'clients';
+  return modalFrame(isClients ? t('clients.importTitle') : t('modal.import.title'), `<div style="font-size:14.5px;color:var(--ink-2);line-height:1.75">${esc(t('modal.import.invalid'))}</div>`, `<button class="btn" type="button" data-action="close-modal">${esc(t('modal.import.no'))}</button><button class="btn btn-primary" type="button" data-action="download-import-sample" data-kind="${isClients ? 'clients' : 'matters'}">${esc(t('modal.import.yes'))}</button>`);
 }
 
 function modalCalendarChoice(mo) {
@@ -3666,11 +3667,23 @@ async function clientImportRows(file) {
 }
 
 function importMatterRows(rows) {
-  const aliases = { client:['客户','client'], counterparties:['对方当事人','opposing parties','contrapartes'], relatedParties:['关联方','related parties','partes relacionadas'], title:['事项名称','事项','matter name','title'], area:['业务类型','practice area','area'], stage:['当前阶段','stage'], status:['状态','status'], due:['截止日期','截止','due date','due'], waiting:['等待谁','waiting for','waiting'], next:['现在要做什么','当前步骤','下一步','next step','next'], owner:['负责人','owner'] };
+  const aliases = {
+    client:['客户','客户名称','委托人','client','client name','customer','cliente','nombre del cliente'],
+    counterparties:['对方当事人','对方','对手方','opposing parties','opposing party','counterparties','counterparty','contrapartes','contraparte','parte contraria'],
+    relatedParties:['关联方','关联主体','关联公司','related parties','related party','related entities','related companies','partes relacionadas','partes vinculadas','empresas relacionadas'],
+    title:['事项名称','事项','事项标题','案件名称','项目名称','matter name','matter title','matter','title','case name','case title','asunto','nombre del asunto','nombre del caso'],
+    area:['业务类型','业务领域','案件类型','领域','practice area','practice','matter type','legal area','area','área','área de práctica','area de practica','tipo de asunto'],
+    stage:['当前阶段','阶段','进度','stage','current stage','phase','etapa','etapa actual','fase'],
+    status:['状态','事项状态','status','matter status','estado','estatus','situación','situacion'],
+    due:['截止日期','截止','到期日','截止时间','期限','due date','due','deadline','expiry date','fecha límite','fecha limite','fecha de vencimiento','plazo'],
+    waiting:['等待谁','等待对象','等待','waiting for','waiting on','waiting','pending from','en espera de','pendiente de','a la espera de'],
+    next:['现在要做什么','当前步骤','下一步','下一步行动','当前任务','待办','next step','next action','current step','current action','next task','next','próximo paso','proximo paso','próxima acción','proxima accion','acción siguiente','accion siguiente','tarea siguiente'],
+    owner:['负责人','经办人','主办人','承办人','owner','matter owner','assignee','person responsible','responsable','encargado','a cargo'],
+  };
   const val = (row, keys) => { const key = Object.keys(row).find(k => keys.some(a => k.trim().toLowerCase() === a.toLowerCase())); return key ? row[key] : ''; };
   const requiredHeaders = ['client','title','next','due'];
   const headersPresent = Object.keys(rows[0] || {}).map(k => k.trim().toLowerCase());
-  const headerAliases = { client:['客户','client'], title:['事项名称','事项','matter name','title'], next:['现在要做什么','当前步骤','下一步','next step','next'], due:['截止日期','截止','due date','due'] };
+  const headerAliases = { client:aliases.client, title:aliases.title, next:aliases.next, due:aliases.due };
   const validFormat = rows.length > 0 && requiredHeaders.every(name => headerAliases[name].some(alias => headersPresent.includes(alias.toLowerCase())));
   if (!validFormat) return { invalid:true, ok:0, bad:0, errors:[] };
   let ok = 0, bad = 0;
@@ -3702,14 +3715,20 @@ function importMatterRows(rows) {
   return { invalid:false, ok, bad, errors };
 }
 
+const CLIENT_IMPORT_ALIASES = {
+  clientName:['客户名称','客户','委托人','客户名','client name','client','customer','customer name','nombre del cliente','cliente'],
+  contactPerson:['联系人','主要联系人','联络人','contact person','contact','primary contact','persona de contacto','contacto principal'],
+  phone:['电话','手机','联系电话','手机号','phone','mobile','telephone','phone number','teléfono','telefono','móvil','movil'],
+  email:['邮箱','电子邮箱','邮件','email','email address','e-mail','correo electrónico','correo electronico','correo'],
+  communicationProgress:['沟通进度','进度','跟进状态','沟通状态','communication progress','progress','follow-up status','contact status','progreso de comunicación','progreso de comunicacion','estado de seguimiento'],
+  lastContact:['最后联系','最后一次联系','最后联系时间','最近联系','last contact','last contacted','last contact date','último contacto','ultimo contacto','fecha del último contacto','fecha del ultimo contacto'],
+  notes:['备注','说明','补充信息','notes','note','remarks','comments','nota','notas','observaciones','comentarios'],
+  contactsText:['多个联系人','联系人列表','其他联系人','contacts','contact list','additional contacts','contactos','lista de contactos'],
+  relationsText:['关联方','关联公司','关联主体','related parties','related companies','related entities','partes relacionadas','empresas relacionadas','partes vinculadas'],
+};
+
 function importedClientData(row) {
-  const aliases={
-    clientName:['客户名称','客户','client name','client','nombre del cliente'],
-    contactPerson:['联系人','contact person','contact','persona de contacto'], phone:['电话','手机','phone','teléfono','telefono'],
-    email:['邮箱','email','correo electrónico','correo electronico'], communicationProgress:['沟通进度','进度','communication progress','progress','progreso de comunicación','progreso de comunicacion'],
-    lastContact:['最后联系','最后一次联系','last contact','último contacto','ultimo contacto'], notes:['备注','notes','nota','notas'],
-    contactsText:['多个联系人','联系人列表','contacts','contactos'], relationsText:['关联方','关联公司','related parties','related companies','partes relacionadas'],
-  };
+  const aliases=CLIENT_IMPORT_ALIASES;
   const out={};
   for(const [field,names] of Object.entries(aliases)){
     const key=Object.keys(row).find(k=>names.includes(String(k).trim().toLowerCase()));
@@ -3717,6 +3736,25 @@ function importedClientData(row) {
   }
   if(out.lastContact) out.lastContact=normalizeImportedDate(out.lastContact)||'';
   return out;
+}
+
+function validClientImportFormat(rows) {
+  if (!rows.length) return false;
+  const names = CLIENT_IMPORT_ALIASES.clientName;
+  return Object.keys(rows[0]).some(key => names.includes(String(key).trim().toLowerCase()));
+}
+
+function importSample(kind) {
+  const samples = kind === 'clients' ? {
+    zh: { heads:['客户名称','联系人','电话','邮箱','沟通进度','最后联系','备注','多个联系人','关联方'], filename:'客户档案导入示例.csv' },
+    en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], filename:'client-record-import-sample.csv' },
+    es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], filename:'ejemplo-importacion-clientes.csv' },
+  } : {
+    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','等待谁','现在要做什么','负责人'], filename:'事项导入示例.csv' },
+    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Waiting for','Next step','Owner'], filename:'matter-import-sample.csv' },
+    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','En espera de','Próximo paso','Responsable'], filename:'ejemplo-importacion-asuntos.csv' },
+  };
+  return samples[lang] || samples.zh;
 }
 
 function partyNames(value) {
@@ -4427,10 +4465,10 @@ document.addEventListener('click', async ev => {
       render();
       break;
     case 'download-import-sample': {
-      const heads = ['客户','事项名称','业务类型','当前阶段','状态','截止日期','等待谁','现在要做什么','负责人'];
-      const csv = '\ufeff' + heads.map(x => `"${x}"`).join(',') + '\n';
+      const sample = importSample(el.getAttribute('data-kind') === 'clients' ? 'clients' : 'matters');
+      const csv = '\ufeff' + sample.heads.map(x => `"${x}"`).join(',') + '\n';
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '事项导入示例.csv'; a.click(); URL.revokeObjectURL(a.href);
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = sample.filename; a.click(); URL.revokeObjectURL(a.href);
       state.modal = null; render();
       break;
     }
@@ -4855,6 +4893,7 @@ document.addEventListener('submit', async ev => {
       let count=0;
       for(const file of files){
         const rows=await clientImportRows(file);
+        if(!validClientImportFormat(rows)){state.modal={type:'import-invalid',importKind:'clients'};render();return;}
         rows.forEach(row=>{
           const data=importedClientData(row); if(!data.clientName) return;
           const old=clientProfiles().find(c=>String(c.clientName).toLowerCase()===data.clientName.toLowerCase());
