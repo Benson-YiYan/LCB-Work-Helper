@@ -3820,13 +3820,13 @@ function validClientImportFormat(rows) {
 
 function importSample(kind) {
   const samples = kind === 'clients' ? {
-    zh: { heads:['客户名称','联系人','电话','邮箱','沟通进度','最后联系','备注','多个联系人','关联方'], filename:'客户档案导入示例.csv' },
-    en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], filename:'client-record-import-sample.csv' },
-    es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], filename:'ejemplo-importacion-clientes.csv' },
+    zh: { heads:['客户名称','联系人','电话','邮箱','沟通进度','最后联系','备注','多个联系人','关联方'], required:[0], filename:'客户档案导入示例.xls' },
+    en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], required:[0], filename:'client-record-import-sample.xls' },
+    es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], required:[0], filename:'ejemplo-importacion-clientes.xls' },
   } : {
-    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','截止方式','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], filename:'事项导入示例.csv' },
-    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Due setting','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], filename:'matter-import-sample.csv' },
-    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','Tipo de vencimiento','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], filename:'ejemplo-importacion-asuntos.csv' },
+    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','截止方式','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], required:[0,1,4], filename:'事项导入示例.xls' },
+    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Due setting','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], required:[0,1,4], filename:'matter-import-sample.xls' },
+    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','Tipo de vencimiento','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], required:[0,1,4], filename:'ejemplo-importacion-asuntos.xls' },
   };
   return samples[lang] || samples.zh;
 }
@@ -4556,8 +4556,11 @@ document.addEventListener('click', async ev => {
       break;
     case 'download-import-sample': {
       const sample = importSample(el.getAttribute('data-kind') === 'clients' ? 'clients' : 'matters');
-      const csv = '\ufeff' + sample.heads.map(x => `"${x}"`).join(',') + '\n';
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const required = new Set(sample.required || []);
+      const headers = sample.heads.map((x, index) => `<th style="font-weight:700;color:${required.has(index)?'#c62828':'#111827'};background:#f3f4f6;border:1px solid #cbd5e1;padding:6px;white-space:nowrap">${esc(x)}</th>`).join('');
+      const cells = sample.heads.map(() => '<td style="border:1px solid #cbd5e1;padding:6px;min-width:110px">&nbsp;</td>').join('');
+      const html = `<!doctype html><html><head><meta charset="utf-8"></head><body><table><tr>${headers}</tr><tr>${cells}</tr></table></body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = sample.filename; a.click(); URL.revokeObjectURL(a.href);
       state.modal = null; render();
       break;
