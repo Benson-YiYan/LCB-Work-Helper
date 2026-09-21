@@ -51,6 +51,7 @@ const sync = {
   retryCount: 0,
   retryTimer: null,
   syncedLogs: new Set(),
+  logStateBaseline: new Map(),
   purged: new Set(),   // 要彻底删掉的远端事项
 };
 
@@ -1625,7 +1626,7 @@ function finishLogout(options) {
   if(typeof pushTimer!=='undefined'&&pushTimer){clearTimeout(pushTimer);pushTimer=null;}
   resetSyncRetries();
   sync.busy=false;sync.dirty=false;sync.status='loading';sync.error='';sync.lastAt=0;
-  sync.syncedLogs.clear();sync.purged.clear();
+  sync.syncedLogs.clear();sync.logStateBaseline.clear();sync.purged.clear();
   syncReady=!REMOTE_ENABLED;
   go('#/');render();
 }
@@ -1725,6 +1726,7 @@ async function pullRemote(opts) {
     logs = nextLogs;
     seq = nextSeq;
     sync.syncedLogs = new Set(logs.map(l => l.id));
+    sync.logStateBaseline = new Map(logs.map(l => [l.id, LCBLogSync.stateFingerprint(l)]));
     if (!REMOTE_ENABLED) {
       save(KEY.matters, matters);
       save(KEY.logs, logs);
@@ -1802,14 +1804,21 @@ async function pushRemote() {
       }
       changedMatters.forEach(m => { matterServerUpdatedAt.set(String(m.id), pushedAt); matterPlainBaseline.set(String(m.id),JSON.stringify(m)); });
     }
-    // 已读状态会修改旧日志，所以每次都 upsert 全部日志，确保其他设备同步。
-    if (logs.length) {
+    // 新日志只做 INSERT；旧日志只同步可变的已读/删除状态，避免触发服务端“历史不可改写”保护。
+    const logChanges=LCBLogSync.partition(logs,sync.syncedLogs,sync.logStateBaseline);
+    if (logChanges.newLogs.length) {
       const encrypted = globalThis.LCBCrypto && LCBCrypto.state.ready
-        ? await Promise.all(logs.map(l => LCBCrypto.prepareLog(l, sbFetch))) : logs;
-      const rows = encrypted.map((l, i) => ({ id: logs[i].id, matter_id: String(logs[i].matterId), data: l }));
-      const r = await sbFetch('/logs', { method: 'POST', headers: UPSERT, body: JSON.stringify(rows) });
-      if (!r.ok) throw new Error('log-sync-http-' + r.status);
-      logs.forEach(l => sync.syncedLogs.add(l.id));
+        ? await Promise.all(logChanges.newLogs.map(l => LCBCrypto.prepareLog(l, sbFetch))) : logChanges.newLogs;
+      const rows = encrypted.map((l, i) => ({ id: logChanges.newLogs[i].id, matter_id: String(logChanges.newLogs[i].matterId), data: l }));
+      const r = await sbFetch('/logs', { method: 'POST', headers:{Prefer:'resolution=ignore-duplicates,return=minimal'}, body: JSON.stringify(rows) });
+      if (!r.ok) throw new Error('log-insert-http-' + r.status + ':' + (await r.text()).slice(0,240));
+      logChanges.newLogs.forEach(l=>{sync.syncedLogs.add(l.id);sync.logStateBaseline.set(l.id,LCBLogSync.stateFingerprint(l));});
+    }
+    for(const log of logChanges.stateUpdates){
+      const data=globalThis.LCBCrypto&&LCBCrypto.state.ready?await LCBCrypto.prepareLog(log,sbFetch):log;
+      const r=await sbFetch('/logs?id=eq.'+encodeURIComponent(log.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({data})});
+      if(!r.ok)throw new Error('log-state-http-'+r.status+':'+(await r.text()).slice(0,240));
+      sync.logStateBaseline.set(log.id,LCBLogSync.stateFingerprint(log));
     }
     await sbFetch('/meta', { method: 'POST', headers: UPSERT, body: JSON.stringify([{ key: 'seq', value: seq }]) });
     for (const id of [...sync.purged]) {
