@@ -20,6 +20,14 @@
     return (messages || []).filter(message => canViewMessage(message, userId));
   }
 
+  function latestVisibleMessageAt(messages, userId) {
+    return visibleMessages(messages, userId).reduce((latest, message) => Math.max(latest, Number(message.at) || 0), 0);
+  }
+
+  function hasNewVisibleMessage(previous, next, userId) {
+    return latestVisibleMessageAt(next, userId) > latestVisibleMessageAt(previous, userId);
+  }
+
   function messageRecipients(allUserIds, senderId, blockedTo) {
     const sender = String(senderId);
     const blocked = new Set((blockedTo || []).map(String));
@@ -37,7 +45,7 @@
   }
 
   function normalizeReference(reference) {
-    if (!reference || !['matter', 'client', 'step'].includes(reference.type)) return null;
+    if (!reference || !['matter', 'client', 'step', 'file'].includes(reference.type)) return null;
     const normalized = { type: reference.type };
     if (reference.matterId != null) normalized.matterId = String(reference.matterId);
     if (reference.id != null) normalized.id = String(reference.id);
@@ -46,8 +54,8 @@
   }
 
   function pickReferenceValue(type, values) {
-    return ['matter', 'step', 'client'].includes(type) ? String(values && values[type] || '') : '';
+    return ['matter', 'step', 'client', 'file'].includes(type) ? String(values && values[type] || '') : '';
   }
 
-  return { CHAT_KEY, canViewMessage, visibleMessages, messageRecipients, unreadCount, blockedLabel, normalizeReference, pickReferenceValue };
+  return { CHAT_KEY, canViewMessage, visibleMessages, latestVisibleMessageAt, hasNewVisibleMessage, messageRecipients, unreadCount, blockedLabel, normalizeReference, pickReferenceValue };
 });

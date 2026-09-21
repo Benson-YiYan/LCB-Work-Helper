@@ -1,7 +1,7 @@
 /* =========================================================================
-   LCB Matter 总表 · 原型 v1
+   LCB Work Hub · 原型 v1
    -------------------------------------------------------------------------
-   需求来源：《LCB 中墨法律协作团队 · Matter 总表（网页版）需求单 v1》
+   需求来源：《LCB 中墨法律协作团队 · Work Hub（网页版）需求单 v1》
    数据保存在浏览器本地（localStorage），因此可以离线试用、随点随存。
    将来接后端时，只需把 storage 层的读写换成接口调用，界面不用改。
    ========================================================================= */
@@ -257,18 +257,18 @@ BEGINNER_TUTORIAL.es.steps.splice(1,0,['Búsqueda completa','Busca asuntos, clie
 BEGINNER_TUTORIAL.zh.steps.splice(8,0,['期限计算','按自然日或工作日计算截止日期，并可一键创建提前 7、3、1 天提醒。'],['工作报告','按时间、客户、负责人和业务类型汇总事项，可导出 Excel/CSV 或打印为 PDF。']);
 BEGINNER_TUTORIAL.en.steps.splice(8,0,['Deadline calculator','Calculate calendar or business-day deadlines and create reminders 7, 3, and 1 days in advance.'],['Work reports','Summarize matters by date, client, owner, and area; export Excel/CSV or print to PDF.']);
 BEGINNER_TUTORIAL.es.steps.splice(8,0,['Calculadora de plazos','Calcula plazos naturales o hábiles y crea avisos 7, 3 y 1 días antes.'],['Informes de trabajo','Resume asuntos por fecha, cliente, responsable y área; exporta Excel/CSV o imprime en PDF.']);
-BEGINNER_TUTORIAL.zh.steps.splice(11,0,['聊天','独立团队聊天支持 @ 多选成员，并可用 + 引用事项、客户档案或步骤。发送者可长期屏蔽成员；屏蔽提示只对发送者本人显示。']);
-BEGINNER_TUTORIAL.en.steps.splice(11,0,['Chat','Team chat supports multi-select @ mentions and read-only matter, client, or step cards. Senders can persistently block members; only the sender sees the blocked label.']);
-BEGINNER_TUTORIAL.es.steps.splice(11,0,['Chat','El chat admite menciones @ múltiples y tarjetas de solo lectura de asuntos, clientes o pasos. El bloqueo persistente y su aviso solo corresponden al remitente.']);
+BEGINNER_TUTORIAL.zh.steps.splice(11,0,['聊天','独立团队聊天支持 @ 多选成员，可引用事项、客户档案、步骤或事项文件，也可上传加密文件随消息发送。发送者可长期屏蔽成员。']);
+BEGINNER_TUTORIAL.en.steps.splice(11,0,['Chat','Team chat supports multi-select @ mentions, references to matters, clients, steps or matter files, and encrypted file uploads sent with a message. Senders can persistently block members.']);
+BEGINNER_TUTORIAL.es.steps.splice(11,0,['Chat','El chat admite menciones @ múltiples, referencias a asuntos, clientes, pasos o archivos y el envío de archivos cifrados. El remitente puede bloquear miembros de forma persistente.']);
 TUTORIAL_DETAILS.zh.splice(1,0,['输入至少两个字符后点击“搜索”；结果包括事项、客户、聊天、动态和文件名。','点击结果打开相关事项或客户档案；没有权限的数据不会出现。']);
 TUTORIAL_DETAILS.en.splice(1,0,['Enter at least two characters and select Search; results include matters, clients, chats, activity, and filenames.','Select a result to open it. Content outside your permissions never appears.']);
 TUTORIAL_DETAILS.es.splice(1,0,['Introduce al menos dos caracteres y pulsa Buscar; incluye asuntos, clientes, chats, actividad y archivos.','Pulsa un resultado para abrirlo. Nunca aparece contenido sin permiso.']);
 TUTORIAL_DETAILS.zh.splice(8,0,['填写起始日期、天数和计算方式；工作日模式会排除周末及手工填写的节假日。','“计算截止日”显示结果；“创建 7／3／1 天前提醒”会把三次提醒加入日历和通知。','计算结果仅供工作管理，法定期限应由律师复核。'],['选择日期范围、客户、负责人和业务类型后点击“生成报告”。','“导出 Excel/CSV”下载表格；“打印／导出 PDF”打开浏览器打印窗口。','报告只统计当前账号有权查看的事项。']);
 TUTORIAL_DETAILS.en.splice(8,0,['Set the start date, number of days, and method. Business-day mode excludes weekends and entered holidays.','Calculate shows the date; Create reminders adds alerts 7, 3, and 1 days beforehand.','The result supports workflow planning and must be legally verified.'],['Choose the date range, client, owner, and area, then Generate.','Export Excel/CSV downloads a table; Print / export PDF opens the print dialog.','Reports include only matters this account may view.']);
 TUTORIAL_DETAILS.es.splice(8,0,['Indica fecha inicial, días y método. El modo hábil excluye fines de semana y festivos indicados.','Calcular muestra la fecha; Crear avisos añade recordatorios 7, 3 y 1 días antes.','El resultado sirve para gestión y debe verificarse jurídicamente.'],['Elige fechas, cliente, responsable y área, y pulsa Generar.','Exportar Excel/CSV descarga una tabla; Imprimir / exportar PDF abre la impresión.','El informe solo incluye asuntos permitidos.']);
-TUTORIAL_DETAILS.zh.splice(11,0,['在消息框输入文字；“@ 成员”可同时勾选多人。','“+ 引用只读卡片”可选择事项、客户档案或已完成步骤，聊天页不能修改源资料。','“长期屏蔽成员”会保存选择；被屏蔽者看不到你之后发送的文字和引用卡片，其他成员不受影响。','你发送的消息下方会用红字显示“已屏蔽 xxx”，只有你本人看得到。','聊天不进入通知列表；新消息仍会触发系统通知、网页提示和聊天未读气泡。进入聊天页后气泡立即清零。']);
-TUTORIAL_DETAILS.en.splice(11,0,['Write a message and select one or more people under @ Members.','Use + Attach a read-only card for a matter, client record, or completed step; Chat cannot edit the source.','Persistently blocked members cannot see messages or cards you send afterward; other members are unaffected.','A red “Blocked for …” label is visible only to you under your own message.','Chat stays out of Notifications. New messages still trigger system/web alerts and the Chat unread badge; opening Chat clears it.']);
-TUTORIAL_DETAILS.es.splice(11,0,['Escribe el mensaje y selecciona una o varias personas en @ Miembros.','Usa + Adjuntar tarjeta para elegir asunto, cliente o paso completado; Chat no permite editar el origen.','Los miembros bloqueados no verán tus mensajes ni tarjetas posteriores; los demás no se ven afectados.','La etiqueta roja “Bloqueado para…” solo aparece bajo tus mensajes y solo tú la ves.','Los chats no entran en Notificaciones. Mantienen avisos del sistema/web y el indicador de Chat; abrir Chat lo pone a cero.']);
+TUTORIAL_DETAILS.zh.splice(11,0,['在消息框输入文字；“@ 成员”可同时勾选多人。','“引用”可选择事项、客户档案、已完成步骤或事项中的文件；文件卡片可按原事项权限安全下载。','“上传文件并发送”会先在本机加密，再把文件和消息一起发出；可一次选择多个文件。','“屏蔽”会保存选择；被屏蔽者看不到你之后发送的文字、引用卡片和文件，其他成员不受影响。','你发送的消息下方会用红字显示“已屏蔽 xxx”，只有你本人看得到。','收到或发出消息后聊天会自动滚到底部；同步不会清空正在输入的草稿。']);
+TUTORIAL_DETAILS.en.splice(11,0,['Write a message and select one or more people under @ Members.','Reference a matter, client record, completed step, or matter file. File cards download securely under the source matter permissions.','Upload files and send encrypts them on this device first and sends one or more files with the message.','Blocked members cannot see later text, cards, or files from you; other members are unaffected.','Only you see the red “Blocked for …” label under your own message.','Chat follows received and sent messages to the bottom, while sync preserves the draft being typed.']);
+TUTORIAL_DETAILS.es.splice(11,0,['Escribe un mensaje y elige una o varias personas en @ Miembros.','Referencia un asunto, cliente, paso completado o archivo del asunto. Las tarjetas descargan con los permisos del asunto original.','Subir archivos y enviar los cifra primero en este dispositivo y permite adjuntar varios al mensaje.','Los miembros bloqueados no verán tus textos, tarjetas ni archivos posteriores; los demás no se ven afectados.','Solo tú ves la etiqueta roja “Bloqueado para…” bajo tu mensaje.','El chat baja al final al recibir o enviar mensajes y la sincronización conserva el borrador.']);
 BEGINNER_TUTORIAL.zh.steps[2][1] = '这里可新建、搜索和筛选事项，也能批量删除、导入 Excel/CSV 或导出 CSV。点击事项后选择编辑或工作；团队消息统一在独立“聊天”页发送。';
 BEGINNER_TUTORIAL.en.steps[2][1] = 'Create, search, filter, bulk-delete, import Excel/CSV, or export CSV. Select a matter to edit or work on it; team messages are sent from the separate Chat page.';
 BEGINNER_TUTORIAL.es.steps[2][1] = 'Crea, busca, filtra, elimina en lote, importa Excel/CSV o exporta CSV. Pulsa un asunto para editar o trabajar; los mensajes se envían desde Chat.';
@@ -332,7 +332,7 @@ function ft(key, vars) {
 
 /* 每条： [简体中文, English, Español] */
 const STR = {
-  'app.title': ['LCB Matter 总表', 'LCB Matter Board', 'Tablero de Asuntos LCB'],
+  'app.title': ['LCB Work Hub', 'LCB Work Hub', 'LCB Work Hub'],
   'app.team': ['LCB 中墨法律协作团队', 'LCB China–Mexico Legal Collaboration', 'Colaboración legal LCB China–México'],
 
   'login.email': ['邮箱', 'Email', 'Correo electrónico'],
@@ -357,7 +357,7 @@ const STR = {
   'nav.weekly': ['每周视图', 'Weekly', 'Semanal'],
   'nav.inbox': ['通知', 'Notifications', 'Notificaciones'],
   'nav.chat': ['聊天', 'Chat', 'Chat'],
-  'chat.desc': ['团队全局聊天。可 @ 成员，并用 + 引用事项、客户档案或步骤。', 'Team-wide chat. Mention members and attach a matter, client record, or step with +.', 'Chat global del equipo. Menciona miembros y adjunta asuntos, clientes o pasos con +.'],
+  'chat.desc': ['团队全局聊天。可 @ 成员，引用事项、客户档案、步骤或文件，也可上传加密文件发送。', 'Team-wide chat. Mention members, reference matters, clients, steps or files, and send encrypted uploads.', 'Chat global del equipo. Menciona miembros, referencia asuntos, clientes, pasos o archivos y envía archivos cifrados.'],
   'chat.mentions': ['@ 成员（可多选）', '@ Members (select multiple)', '@ Miembros (selección múltiple)'],
   'chat.reference': ['+ 引用只读卡片', '+ Attach a read-only card', '+ Adjuntar tarjeta de solo lectura'],
   'chat.noReference': ['不引用', 'No attachment', 'Sin adjunto'],
@@ -372,6 +372,9 @@ const STR = {
   'chat.matter': ['事项', 'Matter', 'Asunto'],
   'chat.client': ['客户档案', 'Client record', 'Expediente de cliente'],
   'chat.step': ['步骤', 'Step', 'Paso'],
+  'chat.file': ['文件', 'File', 'Archivo'],
+  'chat.uploadFiles': ['上传文件并发送', 'Upload files and send', 'Subir archivos y enviar'],
+  'chat.selectedFiles': ['已选择：{names}', 'Selected: {names}', 'Seleccionados: {names}'],
   'nav.clients': ['客户档案', 'Clients', 'Clientes'],
   'nav.settings': ['信息', 'Info', 'Información'],
   'nav.trash': ['回收站', 'Recycle bin', 'Papelera'],
@@ -929,7 +932,7 @@ const STR = {
   'toast.fileFailed': ['附件操作失败，请重试', 'Attachment operation failed. Try again.', 'Error con el archivo. Inténtalo de nuevo.'],
   'toast.logoutAllFailed': ['无法退出其他设备，请重试', 'Could not sign out other devices. Try again.', 'No se pudieron cerrar las otras sesiones. Inténtalo de nuevo.'],
   'toast.chatSent': ['消息已发送', 'Message sent', 'Mensaje enviado'],
-  'toast.needMessage': ['请输入消息', 'Please enter a message', 'Escribe un mensaje'],
+  'toast.needMessage': ['请输入消息或选择文件', 'Enter a message or choose a file', 'Escribe un mensaje o elige un archivo'],
   'toast.needChatRecipient': ['请至少勾选一位事项成员', 'Select at least one matter member', 'Selecciona al menos un miembro del asunto'],
   'toast.markedRead': ['已标为已读', 'Marked as read', 'Marcado como leído'],
   'toast.markedAllRead': ['已将全部通知标为已读', 'All notifications marked as read', 'Todas las notificaciones se marcaron como leídas'],
@@ -1388,6 +1391,9 @@ const state = {
   trashSelected: new Set(),
   notificationSelected: new Set(),
   loginDraft: { email:'', password:'' },
+  chatDraft: { message:'', mentions:[], blocked:null, referenceType:'matter', refMatter:'', refStep:'', refClient:'', refFile:'', files:[] },
+  chatScrollToBottom: false,
+  chatOpened: false,
   loginError: '',
   calendarOffset: 0,
   mobileNavOpen: false,
@@ -1619,6 +1625,8 @@ function finishLogout(options) {
   const expired=!!(options&&options.expired);
   session=null;authSession=null;consecutiveAuthFailures=0;
   state.loginDraft={email:'',password:''};
+  state.chatDraft={message:'',mentions:[],blocked:null,referenceType:'matter',refMatter:'',refStep:'',refClient:'',refFile:'',files:[]};
+  state.chatOpened=false;state.chatScrollToBottom=false;
   if(globalThis.LCBCrypto) LCBCrypto.lock();
   saveSessionValue(KEY.auth,null);save(KEY.session,null);clearPrivateCache();
   state.bulkSelected.clear();state.clientSelected.clear();state.trashSelected.clear();state.notificationSelected.clear();
@@ -1669,6 +1677,7 @@ function queueSyncRetry(kind) {
 function userIsInteracting() {
   if (state.modal) return true;
   const active = document.activeElement;
+  if (location.hash.startsWith('#/chat') && active && active.closest && active.closest('.chat-composer')) return false;
   if (active && (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName || ''))) return true;
   try {
     const selection = window.getSelection && window.getSelection();
@@ -1710,6 +1719,10 @@ async function pullRemote(opts) {
       JSON.stringify(nextLogs) !== JSON.stringify(logs) || nextSeq !== seq;
     // 请求发出后用户可能刚开始输入；这次结果留到下一轮再取。
     if (background && userIsInteracting()) { sync.busy = false; return; }
+    const activeUserBeforePull = currentUser();
+    if (location.hash.startsWith('#/chat') && activeUserBeforePull && LCBChatCore.hasNewVisibleMessage(logs,nextLogs,activeUserBeforePull.id)) {
+      state.chatScrollToBottom = true;
+    }
     matters = nextMatters;
     matterServerUpdatedAt.clear();
     matterPlainBaseline.clear();
@@ -2025,6 +2038,7 @@ function chatReferenceOptions() {
   visibleMatters(currentUser()).forEach(m=>{
     rows.push({value:`matter:${m.id}`,label:`${t('chat.matter')} · ${m.no} · ${L(m.title)}`});
     (m.steps||[]).forEach((step,index)=>rows.push({value:`step:${m.id}:${step.id||index}`,label:`${t('chat.step')} · ${m.no} · ${L(step.text)}`}));
+    (m.files||[]).forEach((file,index)=>rows.push({value:`file:${m.id}:${index}`,label:`${t('chat.file')} · ${m.no} · ${L(file.name)}`}));
   });
   clientProfiles().forEach(c=>rows.push({value:`client:${c.id}`,label:`${t('chat.client')} · ${c.clientName}`}));
   return rows;
@@ -2034,11 +2048,13 @@ function chatReferenceFromValue(value) {
   if(parts[0]==='matter'){const m=matterById(parts[1]);return m?{type:'matter',id:String(m.id),title:`${m.no} · ${L(m.title)}`,subtitle:L(m.client),details:[areaName(m.area),L(m.next),fmtDate(m.due)].filter(Boolean)}:null;}
   if(parts[0]==='client'){const c=matterById(parts[1]);return c?{type:'client',id:String(c.id),title:c.clientName,subtitle:c.communicationProgress||'',details:[c.contactPerson,c.phone,c.email].filter(Boolean)}:null;}
   if(parts[0]==='step'){const m=matterById(parts[1]),step=m&&(m.steps||[]).find((s,i)=>String(s.id||i)===parts[2]);return m&&step?{type:'step',matterId:String(m.id),id:String(step.id||parts[2]),title:L(step.text),subtitle:`${m.no} · ${L(m.title)}`,details:[(USER[step.owner]||{}).name||step.owner,fmtDate(step.due)].filter(Boolean)}:null;}
+  if(parts[0]==='file'){const m=matterById(parts[1]),file=m&&(m.files||[])[Number(parts[2])];return m&&file?{type:'file',matterId:String(m.id),id:String(file.storagePath||parts[2]),title:L(file.name),subtitle:`${m.no} · ${L(m.title)}`,details:[file.size?`${Math.max(1,Math.round(file.size/1024))} KB`:'',file.uploadedAt?fmtStamp(file.uploadedAt):''].filter(Boolean)}:null;}
   return null;
 }
 function chatReferenceCard(reference) {
   if(!reference)return '';
-  return `<div class="chat-reference-card"><span>${esc(t('chat.'+reference.type))}</span><b>${esc(reference.title||'')}</b><small>${esc(reference.subtitle||'')}</small>${(reference.details||[]).length?`<div>${reference.details.map(x=>`<em>${esc(x)}</em>`).join('')}</div>`:''}</div>`;
+  const attributes=reference.type==='file'?` role="button" tabindex="0" data-action="download-chat-file" data-id="${esc(reference.matterId||'')}" data-file-id="${esc(reference.id||'')}"`:'';
+  return `<div class="chat-reference-card ${reference.type==='file'?'chat-file-card':''}"${attributes}><span>${esc(t('chat.'+reference.type))}</span><b>${esc(reference.title||'')}</b><small>${esc(reference.subtitle||'')}</small>${(reference.details||[]).length?`<div>${reference.details.map(x=>`<em>${esc(x)}</em>`).join('')}</div>`:''}</div>`;
 }
 function inboxText(l) {
   if (!l || !l.notice) return '';
@@ -2879,11 +2895,31 @@ function viewChat() {
   const names=Object.fromEntries(USERS.map(x=>[x.id,x.name]));
   const rows = messages.length ? messages.map(l => {
     const blocked=LCBChatCore.blockedLabel(l,u.id,names),mentions=(l.vars&&l.vars.mentions||[]).map(id=>(USER[id]||{}).name||id);
-    return `<div class="chat-message ${l.by===u.id?'mine':''}"><div class="chat-message-meta"><b>${esc((USER[l.by]||{}).name||l.by)}</b><span>${esc(fmtStamp(l.at))}</span>${mentions.length?`<span>@ ${esc(mentions.join('、'))}</span>`:''}</div><div class="chat-message-body">${esc(L(l.vars&&l.vars.message||''))}</div>${chatReferenceCard(l.vars&&l.vars.reference)}${blocked?`<div class="chat-blocked-label">${esc(t('chat.blockedByMe',{names:blocked}))}</div>`:''}</div>`;
+    const attachments=(l.vars&&l.vars.attachments||[]).map(chatReferenceCard).join('');
+    return `<div class="chat-message ${l.by===u.id?'mine':''}"><div class="chat-message-meta"><b>${esc((USER[l.by]||{}).name||l.by)}</b><span>${esc(fmtStamp(l.at))}</span>${mentions.length?`<span>@ ${esc(mentions.join('、'))}</span>`:''}</div>${l.vars&&l.vars.message?`<div class="chat-message-body">${esc(L(l.vars.message))}</div>`:''}${chatReferenceCard(l.vars&&l.vars.reference)}${attachments}${blocked?`<div class="chat-blocked-label">${esc(t('chat.blockedByMe',{names:blocked}))}</div>`:''}</div>`;
   }).join('') : `<div class="chat-empty">${esc(t('modal.chat.empty'))}</div>`;
-  const blocked=new Set(chatBlocks(u.id)),options=chatReferenceOptions(),others=USERS.filter(x=>x.id!==u.id);
-  const optionList=(type)=>`<option value="">${esc(t('chat.noReference'))}</option>${options.filter(x=>x.value.startsWith(type+':')).map(x=>`<option value="${esc(x.value)}">${esc(x.label.replace(/^.*? · /,''))}</option>`).join('')}`;
-  return `<div class="page-head"><div><h1>${esc(t('nav.chat'))}</h1><div class="desc">${esc(t('chat.desc'))}</div></div></div><div class="card card-pad chat-workspace"><div class="chat-history chat-global-history" aria-live="polite">${rows}</div><form data-action="send-global-chat" class="chat-composer"><div class="chat-compose-row"><div class="chat-tool-rail"><details class="chat-tool"><summary title="${esc(t('chat.memberPopup'))}">@</summary><div class="chat-tool-pop"><b>${esc(t('chat.memberPopup'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="mentions" value="${x.id}"> ${esc(x.name)}</label>`).join('')}</div></div></details><details class="chat-tool"><summary class="chat-block-button" title="${esc(t('chat.block'))}">${esc(t('chat.block'))}</summary><div class="chat-tool-pop"><b>${esc(t('chat.block'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="blocked" value="${x.id}" ${blocked.has(x.id)?'checked':''}> ${esc(x.name)}</label>`).join('')}</div><small>${esc(t('chat.blockedHint'))}</small></div></details><details class="chat-tool"><summary title="${esc(t('chat.referencePopup'))}">+</summary><div class="chat-tool-pop chat-reference-pop"><b>${esc(t('chat.referencePopup'))}</b><div class="reference-switch"><input id="ref-matter" type="radio" name="referenceType" value="matter" checked><label for="ref-matter">${esc(t('chat.matter'))}</label><input id="ref-step" type="radio" name="referenceType" value="step"><label for="ref-step">${esc(t('chat.step'))}</label><input id="ref-client" type="radio" name="referenceType" value="client"><label for="ref-client">${esc(t('chat.client'))}</label><div class="reference-panels"><div data-reference-panel="matter"><select name="refMatter">${optionList('matter')}</select></div><div data-reference-panel="step"><select name="refStep">${optionList('step')}</select></div><div data-reference-panel="client"><select name="refClient">${optionList('client')}</select></div></div></div></div></details></div><div class="chat-input-area"><textarea name="message" rows="3" required placeholder="${esc(t('chat.messagePlaceholder'))}"></textarea><button class="btn btn-primary" type="submit">${esc(t('chat.send'))}</button></div></div></form></div>`;
+  if(state.chatDraft.blocked===null)state.chatDraft.blocked=chatBlocks(u.id);
+  const draft=state.chatDraft,blocked=new Set(draft.blocked),options=chatReferenceOptions(),others=USERS.filter(x=>x.id!==u.id);
+  const optionList=(type,value)=>`<option value="">${esc(t('chat.noReference'))}</option>${options.filter(x=>x.value.startsWith(type+':')).map(x=>`<option value="${esc(x.value)}" ${x.value===value?'selected':''}>${esc(x.label.replace(/^.*? · /,''))}</option>`).join('')}`;
+  const checked=(list,id)=>list.includes(id)?'checked':'';
+  const fileNames=(draft.files||[]).map(file=>file.name).join('、');
+  return `<div class="page-head"><div><h1>${esc(t('nav.chat'))}</h1><div class="desc">${esc(t('chat.desc'))}</div></div></div>
+    <div class="card card-pad chat-workspace">
+      <div class="chat-history chat-global-history" aria-live="polite">${rows}</div>
+      <form data-action="send-global-chat" class="chat-composer">
+        <div class="chat-compose-row">
+          <div class="chat-tool-rail">
+            <details class="chat-tool"><summary title="${esc(t('chat.memberPopup'))}">@</summary><div class="chat-tool-pop"><b>${esc(t('chat.memberPopup'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="mentions" value="${x.id}" ${checked(draft.mentions,x.id)}> ${esc(x.name)}</label>`).join('')}</div></div></details>
+            <details class="chat-tool"><summary class="chat-block-button" title="${esc(t('chat.block'))}">${esc(t('chat.block'))}</summary><div class="chat-tool-pop"><b>${esc(t('chat.block'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="blocked" value="${x.id}" ${checked(draft.blocked,x.id)}> ${esc(x.name)}</label>`).join('')}</div><small>${esc(t('chat.blockedHint'))}</small></div></details>
+            <details class="chat-tool"><summary title="${esc(t('chat.referencePopup'))}">+</summary><div class="chat-tool-pop chat-reference-pop"><b>${esc(t('chat.referencePopup'))}</b><div class="reference-switch">
+              ${['matter','step','client','file'].map(type=>`<input id="ref-${type}" type="radio" name="referenceType" value="${type}" ${draft.referenceType===type?'checked':''}><label for="ref-${type}">${esc(t('chat.'+type))}</label>`).join('')}
+              <div class="reference-panels"><div data-reference-panel="matter"><select name="refMatter">${optionList('matter',draft.refMatter)}</select></div><div data-reference-panel="step"><select name="refStep">${optionList('step',draft.refStep)}</select></div><div data-reference-panel="client"><select name="refClient">${optionList('client',draft.refClient)}</select></div><div data-reference-panel="file"><select name="refFile">${optionList('file',draft.refFile)}</select></div></div>
+            </div></div></details>
+          </div>
+          <div class="chat-input-area"><div class="chat-input-stack"><textarea name="message" rows="3" placeholder="${esc(t('chat.messagePlaceholder'))}">${esc(draft.message)}</textarea><label class="chat-upload-button"><input type="file" name="chatFiles" multiple><span>📎 ${esc(t('chat.uploadFiles'))}</span></label>${fileNames?`<small class="chat-selected-files">${esc(t('chat.selectedFiles',{names:fileNames}))}</small>`:''}</div><button class="btn btn-primary" type="submit">${esc(t('chat.send'))}</button></div>
+        </div>
+      </form>
+    </div>`;
 }
 
 /* ------------------------------ 视图：事项详情 ------------------------------ */
@@ -3383,7 +3419,7 @@ function modalMatterAction(mo) {
 
 let fileUploadInFlight = false;
 
-async function uploadEncryptedAttachment(id,file) {
+async function uploadEncryptedAttachment(id,file,options) {
   const m=matterById(id);
   if(!m||!file) return false;
   try {
@@ -3399,12 +3435,13 @@ async function uploadEncryptedAttachment(id,file) {
     const versionGroup=safeName.toLocaleLowerCase();
     const sameVersions=m.files.filter(item=>(item.versionGroup||String(L(item.name)).normalize('NFKC').toLocaleLowerCase())===versionGroup);
     const version=sameVersions.reduce((max,item)=>Math.max(max,Number(item.version)||1),0)+1;
-    m.files.push({name:safeName,type:file.type,size:file.size,storagePath,encrypted:'lcb-e2ee-v1',uploadedBy:currentUser().id,uploadedAt:Date.now(),versionGroup,version});
-    addLogKey(id,currentUser().id,'detail.entry.fileAdd',{name:safeName},{
+    const uploadedFile={name:safeName,type:file.type,size:file.size,storagePath,encrypted:'lcb-e2ee-v1',uploadedBy:currentUser().id,uploadedAt:Date.now(),versionGroup,version};
+    m.files.push(uploadedFile);
+    if(!(options&&options.silent))addLogKey(id,currentUser().id,'detail.entry.fileAdd',{name:safeName},{
       key:'inbox.fileAdd',vars:noticeVars(m,currentUser().id,{name:safeName}),
     });
     commit();
-    return true;
+    return uploadedFile;
   } catch(e) {
     if(!authExpiredError(e)) showSystemError(e);
     return false;
@@ -3619,6 +3656,11 @@ function pageMarkup(content) {
   return `${CAN_PERSIST ? '' : `<div class="warn">${esc(t('banner.noStorage'))}</div>`}${content}`;
 }
 
+function scrollChatToBottom() {
+  const history=document.querySelector('.chat-global-history');
+  if(history)history.scrollTop=history.scrollHeight;
+}
+
 function render() {
   const app = document.getElementById('app');
   const modalRoot = document.getElementById('modal-root');
@@ -3637,6 +3679,10 @@ function render() {
 
   app.innerHTML = shell(route, content);
   requestAnimationFrame(updateNavScrollControls);
+  if(route.startsWith('/chat')&&(state.chatScrollToBottom||!state.chatOpened)){
+    state.chatOpened=true;state.chatScrollToBottom=false;
+    requestAnimationFrame(scrollChatToBottom);
+  } else if(!route.startsWith('/chat')) state.chatOpened=false;
   modalRoot.innerHTML = renderModal() + renderGuide();
   if (state.modal && state.modal.type === 'file') {
     const first = document.getElementById('file-form');
@@ -4598,6 +4644,14 @@ document.addEventListener('click', async ev => {
       render();
       break;
     }
+    case 'download-chat-file': {
+      const id=el.getAttribute('data-id'),fileId=el.getAttribute('data-file-id');
+      const m=matterById(id),idx=m?(m.files||[]).findIndex((file,index)=>String(file.storagePath||index)===String(fileId)):-1;
+      const file=m&&idx>=0&&(m.files||[])[idx];
+      if(!file||!file.storagePath||!canSee(currentUser(),m))break;
+      state.modal={type:'confirm',titleKey:'modal.fileDownload.title',body:t('modal.fileDownload.body',{name:L(file.name)}),confirmKey:'modal.fileDownload.confirm',action:'confirm-download-file',id,idx};
+      render();break;
+    }
     case 'confirm-download-file': {
       const pending=state.modal;
       if(pending) await downloadEncryptedAttachment(pending.id,pending.idx);
@@ -4913,6 +4967,24 @@ document.addEventListener('click', async ev => {
 });
 
 document.addEventListener('change', ev => {
+  const chatForm=ev.target.closest('.chat-composer');
+  if(chatForm){
+    const name=ev.target.name;
+    if(name==='mentions')state.chatDraft.mentions=[...chatForm.querySelectorAll('[name="mentions"]:checked')].map(x=>x.value);
+    if(name==='blocked'){
+      state.chatDraft.blocked=[...chatForm.querySelectorAll('[name="blocked"]:checked')].map(x=>x.value);
+      const u=currentUser();if(u)save(chatBlockKey(u.id),state.chatDraft.blocked);
+    }
+    if(name==='referenceType')state.chatDraft.referenceType=ev.target.value;
+    if(['refMatter','refStep','refClient','refFile'].includes(name))state.chatDraft[name]=ev.target.value;
+    if(name==='chatFiles'){
+      state.chatDraft.files=[...(ev.target.files||[])];
+      const label=chatForm.querySelector('.chat-selected-files');
+      if(label)label.textContent=t('chat.selectedFiles',{names:state.chatDraft.files.map(file=>file.name).join('、')});
+      else render();
+    }
+    return;
+  }
   // 业务类型 / 阶段 / 等待谁 选了「自定义…」就露出输入框
   const custom = ev.target.closest('[data-custom-select]');
   if (custom) {
@@ -4946,6 +5018,10 @@ document.addEventListener('change', ev => {
 });
 
 document.addEventListener('input', ev => {
+  if(ev.target.matches('.chat-composer textarea[name="message"]')){
+    state.chatDraft.message=ev.target.value;
+    return;
+  }
   const el = ev.target.closest('[data-filter="q"]');
   if (!el) return;
   state.filters.q = el.value;
@@ -4987,19 +5063,30 @@ document.addEventListener('submit', async ev => {
   const action = form.getAttribute('data-action');
   if(action==='send-global-chat'){
     const u=currentUser(),message=String(form.message&&form.message.value||'').trim();
-    if(!u||!message){toast(t('toast.needMessage'));return;}
+    const pendingFiles=[...(state.chatDraft.files||[])];
+    if(!u||(!message&&!pendingFiles.length)){toast(t('toast.needMessage'));return;}
+    if(pendingFiles.some(file=>file.size>20*1024*1024)){toast(t('toast.fileTooLarge'));return;}
+    if(!setFormBusy(form,pendingFiles.length?t('modal.file.uploading'):t('chat.send')))return;
     const mentions=[...form.querySelectorAll('[name="mentions"]:checked')].map(x=>x.value).filter(id=>USER[id]&&id!==u.id);
     const blocked=[...form.querySelectorAll('[name="blocked"]:checked')].map(x=>x.value).filter(id=>USER[id]&&id!==u.id);
     save(chatBlockKey(u.id),blocked);
     const channel=ensureGlobalChatChannel();
     const referenceType=(form.querySelector('[name="referenceType"]:checked')||{}).value||'';
-    const referenceValue=LCBChatCore.pickReferenceValue(referenceType,{matter:form.refMatter&&form.refMatter.value,step:form.refStep&&form.refStep.value,client:form.refClient&&form.refClient.value});
+    const referenceValue=LCBChatCore.pickReferenceValue(referenceType,{matter:form.refMatter&&form.refMatter.value,step:form.refStep&&form.refStep.value,client:form.refClient&&form.refClient.value,file:form.refFile&&form.refFile.value});
     const reference=chatReferenceFromValue(referenceValue);
+    const attachments=[];
+    for(const file of pendingFiles){
+      const uploaded=await uploadEncryptedAttachment(channel.id,file,{silent:true});
+      if(!uploaded){clearFormBusy(form);return;}
+      attachments.push({type:'file',matterId:String(channel.id),id:String(uploaded.storagePath),title:uploaded.name,subtitle:t('nav.chat'),details:[uploaded.size?`${Math.max(1,Math.round(uploaded.size/1024))} KB`:''].filter(Boolean)});
+    }
     const recipients=LCBChatCore.messageRecipients(USERS.map(x=>x.id),u.id,blocked);
-    addLogKey(channel.id,u.id,LCBChatCore.CHAT_KEY,{message,mentions,blockedTo:blocked,reference},{key:'inbox.chat',vars:{actor:u.name,title:L(channel.title),message},to:recipients});
+    addLogKey(channel.id,u.id,LCBChatCore.CHAT_KEY,{message,mentions,blockedTo:blocked,reference,attachments},{key:'inbox.chat',vars:{actor:u.name,title:L(channel.title),message:message||attachments.map(x=>x.title).join('、')},to:recipients});
     commit();
     deliverOperationNotification();
     save(chatSeenKey(u.id),Date.now());
+    state.chatDraft={message:'',mentions:[],blocked:blocked.slice(),referenceType:'matter',refMatter:'',refStep:'',refClient:'',refFile:'',files:[]};
+    state.chatScrollToBottom=true;
     render();
     toast(t('toast.chatSent'));
     return;

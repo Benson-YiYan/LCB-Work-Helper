@@ -31,9 +31,15 @@ assert.equal(ChatCore.blockedLabel(message, 'carol', { hector: 'Héctor' }), 'H�
 assert.equal(ChatCore.blockedLabel(message, 'carlos', { hector: 'Héctor' }), '', 'only sender sees blocked label');
 
 assert.deepEqual(ChatCore.normalizeReference({ type: 'step', matterId: 42, id: 3 }), { type: 'step', matterId: '42', id: '3' });
+assert.deepEqual(ChatCore.normalizeReference({ type: 'file', matterId: 42, id: 'report.pdf' }), { type: 'file', matterId: '42', id: 'report.pdf' });
 assert.equal(ChatCore.normalizeReference({ type: 'unknown', id: 1 }), null);
 assert.equal(ChatCore.pickReferenceValue('matter', { matter: 'matter:42', step: 'step:42:3', client: 'client:9' }), 'matter:42');
 assert.equal(ChatCore.pickReferenceValue('step', { matter: 'matter:42', step: 'step:42:3', client: 'client:9' }), 'step:42:3');
 assert.equal(ChatCore.pickReferenceValue('', { matter: 'matter:42' }), '');
+assert.equal(ChatCore.pickReferenceValue('file', { file: 'file:42:0' }), 'file:42:0');
+assert.equal(ChatCore.latestVisibleMessageAt([message], 'carlos'), 200);
+assert.equal(ChatCore.latestVisibleMessageAt([message], 'hector'), 0);
+assert.equal(ChatCore.hasNewVisibleMessage([], [message], 'carlos'), true);
+assert.equal(ChatCore.hasNewVisibleMessage([message], [message], 'carlos'), false);
 
 console.log('chat behavior tests passed');
