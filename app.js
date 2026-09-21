@@ -1148,6 +1148,16 @@ function normalizeImportedDate(value) {
   }
   const m = raw.match(/^(\d{4})\s*[年\/-](\d{1,2})\s*[月\/-](\d{1,2})日?$/);
   if (m) return `${m[1]}-${String(m[2]).padStart(2, '0')}-${String(m[3]).padStart(2, '0')}`;
+  const numeric = raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2}|\d{4})$/);
+  if (numeric) {
+    let first = Number(numeric[1]), second = Number(numeric[2]), year = Number(numeric[3]);
+    if (year < 100) year += 2000;
+    const day = first > 12 ? first : second;
+    const month = first > 12 ? second : first;
+    const parsed = new Date(Date.UTC(year, month - 1, day));
+    if (parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month - 1 && parsed.getUTCDate() === day) return iso(parsed);
+    return '';
+  }
   const d = new Date(raw.replace(/[年\/]/g, '-').replace(/月/g, '-').replace(/日/g, ''));
   return Number.isNaN(d.getTime()) ? '' : iso(d);
 }
@@ -3746,13 +3756,11 @@ function importMatterRows(rows) {
     const importedStatus = normalizeImportedStatus(val(row, aliases.status));
     if (!d.client) errors.push({ title: displayTitle, fieldKey: 'detail.client' });
     if (!d.title) errors.push({ title: displayTitle, fieldKey: 'detail.title' });
-    if (!d.next) errors.push({ title: displayTitle, fieldKey: 'detail.next' });
-    if (!d.due) errors.push({ title: displayTitle, fieldKey: 'detail.due' });
     if (!importedStatus) errors.push({ title: displayTitle, fieldKey: 'detail.status' });
     d.status = importedStatus || 'green';
     d.area = d.area || 'other'; d.stage = d.stage || STAGES[0]; d.waiting = d.waiting || 'none';
-    d.importStatusError = !importedStatus || !d.client || !d.title || !d.next || !d.due;
-    d.client = d.client || '—'; d.title = d.title || '—'; d.next = d.next || '—'; d.due = d.due || rawDue || '—';
+    d.importStatusError = !importedStatus || !d.client || !d.title;
+    d.client = d.client || '—'; d.title = d.title || '—'; d.due = d.due || '';
     d.allowImportErrors = true;
     if ((d.counterparties || d.relatedParties) && potentialConflicts(d).length) {
       errors.push({ title:displayTitle, fieldKey:'conflict.title' }); bad++; return;
