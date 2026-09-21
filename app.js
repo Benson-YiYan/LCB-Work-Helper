@@ -2903,15 +2903,16 @@ function viewChat() {
   const optionList=(type,value)=>`<option value="">${esc(t('chat.noReference'))}</option>${options.filter(x=>x.value.startsWith(type+':')).map(x=>`<option value="${esc(x.value)}" ${x.value===value?'selected':''}>${esc(x.label.replace(/^.*? · /,''))}</option>`).join('')}`;
   const checked=(list,id)=>list.includes(id)?'checked':'';
   const fileNames=(draft.files||[]).map(file=>file.name).join('、');
+  const closeTool=`<button class="chat-tool-close" type="button" data-action="close-chat-tool" aria-label="${esc(L({zh:'关闭弹窗',en:'Close popup',es:'Cerrar ventana'}))}">×</button>`;
   return `<div class="page-head"><div><h1>${esc(t('nav.chat'))}</h1><div class="desc">${esc(t('chat.desc'))}</div></div></div>
     <div class="card card-pad chat-workspace">
       <div class="chat-history chat-global-history" aria-live="polite">${rows}</div>
       <form data-action="send-global-chat" class="chat-composer">
         <div class="chat-compose-row">
           <div class="chat-tool-rail">
-            <details class="chat-tool"><summary title="${esc(t('chat.memberPopup'))}">@</summary><div class="chat-tool-pop"><b>${esc(t('chat.memberPopup'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="mentions" value="${x.id}" ${checked(draft.mentions,x.id)}> ${esc(x.name)}</label>`).join('')}</div></div></details>
-            <details class="chat-tool"><summary class="chat-block-button" title="${esc(t('chat.block'))}">${esc(t('chat.block'))}</summary><div class="chat-tool-pop"><b>${esc(t('chat.block'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="blocked" value="${x.id}" ${checked(draft.blocked,x.id)}> ${esc(x.name)}</label>`).join('')}</div><small>${esc(t('chat.blockedHint'))}</small></div></details>
-            <details class="chat-tool"><summary title="${esc(t('chat.referencePopup'))}">+</summary><div class="chat-tool-pop chat-reference-pop"><b>${esc(t('chat.referencePopup'))}</b><div class="reference-switch">
+            <details class="chat-tool"><summary title="${esc(t('chat.memberPopup'))}">@</summary><div class="chat-tool-pop">${closeTool}<b>${esc(t('chat.memberPopup'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="mentions" value="${x.id}" ${checked(draft.mentions,x.id)}> ${esc(x.name)}</label>`).join('')}</div></div></details>
+            <details class="chat-tool"><summary class="chat-block-button" title="${esc(t('chat.block'))}">${esc(t('chat.block'))}</summary><div class="chat-tool-pop">${closeTool}<b>${esc(t('chat.block'))}</b><div class="chat-choice-list">${others.map(x=>`<label><input type="checkbox" name="blocked" value="${x.id}" ${checked(draft.blocked,x.id)}> ${esc(x.name)}</label>`).join('')}</div><small>${esc(t('chat.blockedHint'))}</small></div></details>
+            <details class="chat-tool"><summary title="${esc(t('chat.referencePopup'))}">+</summary><div class="chat-tool-pop chat-reference-pop">${closeTool}<b>${esc(t('chat.referencePopup'))}</b><div class="reference-switch">
               ${['matter','step','client','file'].map(type=>`<input id="ref-${type}" type="radio" name="referenceType" value="${type}" ${draft.referenceType===type?'checked':''}><label for="ref-${type}">${esc(t('chat.'+type))}</label>`).join('')}
               <div class="reference-panels"><div data-reference-panel="matter"><select name="refMatter">${optionList('matter',draft.refMatter)}</select></div><div data-reference-panel="step"><select name="refStep">${optionList('step',draft.refStep)}</select></div><div data-reference-panel="client"><select name="refClient">${optionList('client',draft.refClient)}</select></div><div data-reference-panel="file"><select name="refFile">${optionList('file',draft.refFile)}</select></div></div>
             </div></div></details>
@@ -4259,6 +4260,11 @@ document.addEventListener('click', async ev => {
   const action = el.getAttribute('data-action');
 
   switch (action) {
+    case 'close-chat-tool': {
+      const tool=el.closest('details.chat-tool');
+      if(tool)tool.open=false;
+      break;
+    }
     case 'local-login': {
       if(!LOCAL_TEST_MODE)break;
       const userId=el.getAttribute('data-user');
