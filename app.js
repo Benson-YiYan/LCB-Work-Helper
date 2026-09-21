@@ -243,6 +243,9 @@ const TUTORIAL_DETAILS = {
 TUTORIAL_DETAILS.zh[1][5] = '新建和修改事项可填写背景、优先级、开始日期、费用、收款、余额、联系人、联系邮箱、备注及原有工作流和权限字段；保存会加密同步，删除会移入回收站。';
 TUTORIAL_DETAILS.en[1][3] = 'Editing includes background, priority, start date, fees, payments, balance, contacts, notes, and the existing workflow and permission fields. Save syncs; Delete moves to trash.';
 TUTORIAL_DETAILS.es[1][3] = 'La edición incluye antecedentes, prioridad, fecha inicial, honorarios, pagos, saldo, contactos, notas y los campos existentes de flujo y permisos. Guardar sincroniza; Eliminar envía a la papelera.';
+TUTORIAL_DETAILS.zh[1][5] += ' 截止日期可留空，也可选择 ASAP；ASAP 事项每天提醒一次。';
+TUTORIAL_DETAILS.en[1][3] += ' The due date is optional and can be set to ASAP; ASAP matters generate one reminder each day.';
+TUTORIAL_DETAILS.es[1][3] += ' La fecha límite es opcional y puede marcarse como ASAP; los asuntos ASAP generan un aviso diario.';
 
 BEGINNER_TUTORIAL.zh.steps.splice(1,0,['全文搜索','搜索事项、客户、聊天、动态和文件名；结果严格按当前账号权限显示。']);
 BEGINNER_TUTORIAL.en.steps.splice(1,0,['Full search','Search matters, clients, chats, activity, and filenames; results follow the current account permissions.']);
@@ -384,7 +387,7 @@ const STR = {
   'list.bulkDelete': ['批量删除', 'Bulk delete', 'Eliminar en lote'],
   'list.import': ['Excel/CSV导入', 'Import Excel/CSV', 'Importar Excel/CSV'],
   'modal.import.title': ['Excel/CSV导入事项', 'Import matters from Excel/CSV', 'Importar asuntos desde Excel/CSV'],
-  'modal.import.hint': ['支持同时选择多个文件。第一行必须是表头。支持事项基本信息、背景、优先级、开始日期、费用与收款、联系人和备注；常见近义表头也能识别。', 'You can select multiple files. The first row must contain headers. Matter details, background, priority, start date, fees and payments, contacts, and notes are supported, including common header synonyms.', 'Puedes seleccionar varios archivos. La primera fila debe contener encabezados. Se admiten datos del asunto, antecedentes, prioridad, fecha de inicio, honorarios y pagos, contactos y notas, incluidos sinónimos habituales.'],
+  'modal.import.hint': ['支持同时选择多个文件。第一行必须是表头。截止日期可留空，“截止方式”可填具体日期、ASAP 或不设置；常见近义表头也能识别。', 'You can select multiple files. The first row must contain headers. Due date is optional; Due setting accepts Specific date, ASAP, or No due date. Common header synonyms are recognized.', 'Puedes seleccionar varios archivos. La primera fila debe contener encabezados. La fecha límite es opcional; Tipo de vencimiento admite Fecha concreta, ASAP o Sin fecha límite. Se reconocen sinónimos habituales.'],
   'modal.import.choose': ['选择 .xlsx、.xls 或 .csv 文件', 'Choose .xlsx, .xls, or .csv files', 'Elige archivos .xlsx, .xls o .csv'],
   'modal.import.confirm': ['导入事项', 'Import matters', 'Importar asuntos'],
   'modal.import.importing': ['导入中…', 'Importing…', 'Importando…'],
@@ -526,6 +529,10 @@ const STR = {
   'detail.nextOwner': ['谁做这一步？', 'Who will do this step?', '¿Quién hará este paso?'],
   'detail.status': ['状态', 'Status', 'Estado'],
   'detail.due': ['截止日期', 'Due date', 'Fecha límite'],
+  'detail.dueMode': ['截止方式', 'Due setting', 'Tipo de vencimiento'],
+  'detail.dueDate': ['具体日期', 'Specific date', 'Fecha concreta'],
+  'detail.dueNone': ['不设置', 'No due date', 'Sin fecha límite'],
+  'detail.dueAsap': ['ASAP（每天提醒）', 'ASAP (daily reminder)', 'ASAP (aviso diario)'],
   'detail.waiting': ['等待谁', 'Waiting for', 'Esperando a'],
   'detail.lastContact': ['最后联系客户', 'Last client contact', 'Último contacto con el cliente'],
   'detail.next': ['现在要做什么？', 'What needs to be done now?', '¿Qué hay que hacer ahora?'],
@@ -1087,7 +1094,7 @@ function today() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
 function addDays(n) { const d = today(); d.setDate(d.getDate() + n); return d; }
 function parseISO(s) { const [y, m, dd] = String(s).slice(0,10).split('-').map(Number); return new Date(y, m - 1, dd); }
 function daysFromToday(s) {
-  if (!s) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return null;
   return Math.round((parseISO(s) - today()) / 86400000);
 }
 const MONTHS = {
@@ -1097,6 +1104,7 @@ const MONTHS = {
 };
 function fmtDate(s) {
   if (!s) return t('fmt.notSet');
+  if (s === 'ASAP') return 'ASAP';
   const d = parseISO(s);
   if (lang === 'zh') return `${d.getMonth() + 1}月${d.getDate()}日`;
   if (lang === 'es') return `${d.getDate()} ${MONTHS.es[d.getMonth()]}`;
@@ -1104,6 +1112,7 @@ function fmtDate(s) {
 }
 function fmtDateShort(s) {
   if (!s) return '—';
+  if (s === 'ASAP') return 'ASAP';
   const d = parseISO(s);
   if (lang === 'es') return `${d.getDate()}/${d.getMonth() + 1}`;
   return `${d.getMonth() + 1}/${d.getDate()}`;
@@ -1131,6 +1140,7 @@ function dueClass(s) {
   return '';
 }
 function dueText(s) {
+  if (s === 'ASAP') return L({zh:'每天提醒',en:'Daily reminder',es:'Aviso diario'});
   const n = daysFromToday(s);
   if (n === null) return t('fmt.notSet');
   if (n < 0) return t('fmt.overdue', { n: -n });
@@ -1142,6 +1152,7 @@ function normalizeImportedDate(value) {
   if (value instanceof Date && !Number.isNaN(value.getTime())) return iso(value);
   const raw = String(value == null ? '' : value).trim();
   if (!raw) return '';
+  if (/^(asap|urgent|尽快|紧急|urgente)$/i.test(raw)) return 'ASAP';
   if (/^\d+(?:\.\d+)?$/.test(raw)) {
     const serial = Number(raw);
     if (serial > 20000 && serial < 80000) return iso(new Date(Date.UTC(1899, 11, 30) + serial * 86400000));
@@ -2087,7 +2098,8 @@ function sorted(list) {
   return [...list].sort((a, b) => {
     const s = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
     if (s !== 0) return s;
-    return (a.due || '9999').localeCompare(b.due || '9999');
+    const dueKey = value => value === 'ASAP' ? '0000' : (value || '9999');
+    return dueKey(a.due).localeCompare(dueKey(b.due));
   });
 }
 
@@ -2095,12 +2107,12 @@ function reminderItems(user) {
   return sorted(visibleMatters(user).filter(m => {
     const due = daysFromToday(m.due);
     const contact = m.lastContact ? -daysFromToday(m.lastContact) : 999;
-    return (due !== null && due <= 3) || m.waiting === 'client' || contact >= 7;
+    return m.due === 'ASAP' || (due !== null && due <= 3) || m.waiting === 'client' || contact >= 7;
   })).map(m => {
     const due = daysFromToday(m.due);
     const contact = m.lastContact ? -daysFromToday(m.lastContact) : 999;
-    let kind = due < 0 ? ft('overdue') : (due <= 3 ? ft('dueSoon') : ft('waitingClient'));
-    if (contact >= 7) kind = ft('staleClient');
+    let kind = m.due === 'ASAP' ? L({zh:'ASAP · 快截止',en:'ASAP · Due soon',es:'ASAP · Próximo a vencer'}) : (due < 0 ? ft('overdue') : (due <= 3 ? ft('dueSoon') : ft('waitingClient')));
+    if (contact >= 7 && m.due !== 'ASAP') kind = ft('staleClient');
     return { matter:m, kind, days:due };
   });
 }
@@ -2860,7 +2872,8 @@ function viewMatter(id,mode) {
             <div class="field"><label>${esc(t('detail.owner'))}</label><select data-field="owner">${ownerOpts}</select></div>
             <div class="field"><label>${esc(t('detail.nextOwner'))}</label><select data-field="nextOwner">${nextOwnerOpts}</select></div>
             <div class="field"><label>${esc(t('detail.status'))}</label><select data-field="status">${statusOpts}</select></div>
-            <div class="field"><label>${esc(t('detail.due'))}</label><input type="date" data-field="due" value="${esc(m.due || '')}"></div>
+            <div class="field"><label>${esc(t('detail.dueMode'))}</label><select data-field="dueMode"><option value="date" ${/^\d{4}-\d{2}-\d{2}$/.test(m.due||'')?'selected':''}>${esc(t('detail.dueDate'))}</option><option value="asap" ${m.due==='ASAP'?'selected':''}>${esc(t('detail.dueAsap'))}</option><option value="none" ${!m.due?'selected':''}>${esc(t('detail.dueNone'))}</option></select></div>
+            <div class="field"><label>${esc(t('detail.due'))}</label><input type="date" data-field="due" value="${esc(/^\d{4}-\d{2}-\d{2}$/.test(m.due||'')?m.due:'')}"></div>
             <div class="field"><label>${esc(t('detail.waiting'))}</label>${waitField}</div>
             <div class="field"><label>${esc(t('detail.lastContact'))}</label><input type="date" data-field="lastContact" value="${esc(String(m.lastContact||'').slice(0,10))}"></div>
             <div class="field"><label>${esc(ft('recurrence'))}</label><select data-field="recurrence">${recurrenceOpts}</select></div>
@@ -3219,7 +3232,8 @@ function modalCompleteStep(mo) {
        <div class="grid-2">
          <div class="field"><label class="req">${esc(t('modal.complete.stage'))}</label>${stageField}</div>
          <div class="field"><label class="req">${esc(t('detail.status'))}</label><select name="status">${statusOpts}</select></div>
-         <div class="field"><label class="req">${esc(t('detail.due'))}</label><input type="date" name="due" value="${esc(m.due || '')}"></div>
+         <div class="field"><label>${esc(t('detail.dueMode'))}</label><select name="dueMode"><option value="date" ${/^\d{4}-\d{2}-\d{2}$/.test(m.due||'')?'selected':''}>${esc(t('detail.dueDate'))}</option><option value="asap" ${m.due==='ASAP'?'selected':''}>${esc(t('detail.dueAsap'))}</option><option value="none" ${!m.due?'selected':''}>${esc(t('detail.dueNone'))}</option></select></div>
+         <div class="field"><label>${esc(t('detail.due'))}</label><input type="date" name="due" value="${esc(/^\d{4}-\d{2}-\d{2}$/.test(m.due||'')?m.due:'')}"></div>
          <div class="field"><label>${esc(t('form.waiting'))}</label>${waitField}</div>
        </div>
        <div class="field"><label class="req">${esc(t('form.next'))}</label>
@@ -3464,7 +3478,8 @@ function modalNewMatter() {
             <div class="field"><label class="req">${esc(t('detail.owner'))}</label><select name="owner">${ownerOpts}</select></div>
             <div class="field"><label class="req">${esc(t('detail.stage'))}</label>${stageField}</div>
             <div class="field"><label class="req">${esc(t('detail.status'))}</label><select name="status">${statusOpts}</select></div>
-            <div class="field"><label class="req">${esc(t('detail.due'))}</label><input type="date" name="due" value="${esc(state.modal.due || '')}" required></div>
+            <div class="field"><label>${esc(t('detail.dueMode'))}</label><select name="dueMode"><option value="date" selected>${esc(t('detail.dueDate'))}</option><option value="asap">${esc(t('detail.dueAsap'))}</option><option value="none">${esc(t('detail.dueNone'))}</option></select></div>
+            <div class="field"><label>${esc(t('detail.due'))}</label><input type="date" name="due" value="${esc(state.modal.due || '')}"></div>
             <div class="field"><label>${esc(t('detail.waiting'))}</label>${waitField}</div>
             <div class="field"><label>${esc(ft('recurrence'))}</label><select name="recurrence"><option value="none">${esc(ft('recurrenceNone'))}</option><option value="weekly">${esc(ft('recurrenceWeekly'))}</option><option value="monthly">${esc(ft('recurrenceMonthly'))}</option></select></div>
             <div class="field"><label>${esc(ft('recurrenceUntil'))}</label><input type="date" name="recurrenceUntil"></div>
@@ -3592,7 +3607,6 @@ function completeStep(id, data) {
   if (!m || !u) return false;
   if (!isStepOwner(u, m) && !u.admin) { toast(t('toast.onlyStepOwner', { name: (USER[m.nextOwner] || {}).name || m.nextOwner })); return false; }
   if (!String(data.next || '').trim()) { toast(t('toast.needNext')); return false; }
-  if (!data.due) { toast(t('toast.needDue')); return false; }
   if (!data.status || !STATUS[data.status]) { toast(t('toast.needStatus')); return false; }
   if ((data.status === 'red' || data.status === 'yellow') && !String(data.reason || '').trim()) {
     toast(t('toast.needReason')); return false;
@@ -3618,7 +3632,8 @@ function completeStep(id, data) {
   if (stage === null || waiting === null) { toast(t('toast.needCustom')); return false; }
   m.stage = stage || m.stage;
   m.status = data.status;
-  m.due = data.due;
+  m.due = data.dueMode === 'asap' ? 'ASAP' : (data.dueMode === 'date' ? String(data.due || '').trim() : '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(m.due || '')) { m.recurrence = 'none'; m.recurrenceUntil = ''; m.recurrenceNext = ''; }
   m.waiting = waiting || 'none';
   m.next = String(data.next).trim();
   m.nextOwner = data.nextOwner || m.nextOwner;
@@ -3723,6 +3738,7 @@ function importMatterRows(rows) {
     stage:['当前阶段','阶段','进度','stage','current stage','phase','etapa','etapa actual','fase'],
     status:['状态','事项状态','status','matter status','estado','estatus','situación','situacion'],
     due:['截止日期','截止','到期日','截止时间','期限','due date','due','deadline','expiry date','fecha límite','fecha limite','fecha de vencimiento','plazo'],
+    dueMode:['截止方式','期限方式','due setting','due mode','deadline setting','tipo de vencimiento','modo de vencimiento'],
     waiting:['等待谁','等待对象','等待','waiting for','waiting on','waiting','pending from','en espera de','pendiente de','a la espera de'],
     next:['现在要做什么','当前步骤','下一步','下一步行动','当前任务','待办','next step','next steps','next action','current step','current action','next task','next','próximo paso','proximo paso','próxima acción','proxima accion','acción siguiente','accion siguiente','tarea siguiente'],
     owner:['负责人','经办人','主办人','承办人','owner','matter owner','assignee','assigned attorney','person responsible','responsable','encargado','a cargo'],
@@ -3750,6 +3766,9 @@ function importMatterRows(rows) {
     const displayTitle = d.title || d.client || '—';
     const rawDue = String(val(row, aliases.due) ?? '').trim();
     d.due = normalizeImportedDate(rawDue);
+    const rawDueMode = d.dueMode.toLowerCase();
+    if (['asap','尽快','紧急','urgente'].includes(rawDueMode)) d.due = 'ASAP';
+    if (['不设置','无','none','no due date','sin fecha límite','sin fecha limite'].includes(rawDueMode)) d.due = '';
     d.startDate = normalizeImportedDate(d.startDate) || d.startDate;
     d.owner = USERS.find(u => u.name === d.owner || u.id === d.owner)?.id || currentUser().id;
     d.nextOwner = d.owner;
@@ -3805,9 +3824,9 @@ function importSample(kind) {
     en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], filename:'client-record-import-sample.csv' },
     es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], filename:'ejemplo-importacion-clientes.csv' },
   } : {
-    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], filename:'事项导入示例.csv' },
-    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], filename:'matter-import-sample.csv' },
-    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], filename:'ejemplo-importacion-asuntos.csv' },
+    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','截止方式','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], filename:'事项导入示例.csv' },
+    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Due setting','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], filename:'matter-import-sample.csv' },
+    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','Tipo de vencimiento','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], filename:'ejemplo-importacion-asuntos.csv' },
   };
   return samples[lang] || samples.zh;
 }
@@ -3856,7 +3875,7 @@ function createMatter(data) {
   const customClient=data.client==='__custom__';
   const client=resolveCustom(data.client,data.clientCustom);
   data.client=client;
-  if (!data.allowImportErrors && (!data.client || !data.title || !data.next || !data.due)) { toast(t('toast.needClient')); return false; }
+  if (!data.allowImportErrors && (!data.client || !data.title || !data.next)) { toast(t('toast.needClient')); return false; }
   if (!data.allowImportErrors && (data.status === 'red' || data.status === 'yellow') && !String(data.reason || '').trim()) { toast(t('toast.needReason')); return false; }
   const stage = resolveCustom(data.stage, data.stageCustom);
   const waiting = resolveCustom(data.waiting, data.waitingCustom);
@@ -3873,6 +3892,8 @@ function createMatter(data) {
   seq += 1;
   const id = seq;
   const team = (data.team && data.team.length) ? data.team.slice() : defaultTeam(area);
+  const due = data.dueMode === 'asap' ? 'ASAP' : (data.dueMode === 'none' ? '' : String(data.due || '').trim());
+  const recurrence = /^\d{4}-\d{2}-\d{2}$/.test(due) ? (data.recurrence || 'none') : 'none';
   const m = {
     id, no: `2026-${String(id).padStart(3, '0')}`,
     client: data.client, title: data.title, area,
@@ -3884,8 +3905,8 @@ function createMatter(data) {
     owner: data.owner, team,
     stage: stage || STAGES[0], status: data.status, reason: data.reason || '',
     next: data.next, nextOwner: data.nextOwner || data.owner,
-    due: data.due, waiting: waiting || 'none',
-    recurrence: data.recurrence || 'none', recurrenceUntil: data.recurrenceUntil || '',
+    due, waiting: waiting || 'none',
+    recurrence, recurrenceUntil: recurrence === 'none' ? '' : (data.recurrenceUntil || ''),
     importStatusError: !!data.importStatusError,
     files: [], lastContact: data.lastContact || iso(today()), notes: String(data.notes || '').trim(),
   };
@@ -3953,7 +3974,7 @@ function saveMatterFromDom(id) {
     totalFee:m.totalFee || '', paymentsReceived:m.paymentsReceived || '', balance:m.balance || '',
     contactName:m.contactName || '', contactEmail:m.contactEmail || '', next: L(m.next), reason: L(m.reason), notes: L(m.notes),
     area: m.area, stage: m.stage, owner: m.owner, nextOwner: m.nextOwner, status: m.status,
-    due: m.due, waiting: m.waiting, lastContact: String(m.lastContact || '').slice(0, 10),
+    due: /^\d{4}-\d{2}-\d{2}$/.test(m.due || '') ? m.due : '', dueMode: m.due === 'ASAP' ? 'asap' : (m.due ? 'date' : 'none'), waiting: m.waiting, lastContact: String(m.lastContact || '').slice(0, 10),
     recurrence: m.recurrence || 'none', recurrenceUntil: m.recurrenceUntil || '',
   };
 
@@ -3963,7 +3984,11 @@ function saveMatterFromDom(id) {
       (get('waiting') === '__custom__' && !String(get('waitingCustom') || '').trim())) {
     toast(t('toast.needCustom')); return;
   }
+  const dueMode = get('dueMode') || 'none';
+  const nextDue = dueMode === 'asap' ? 'ASAP' : (dueMode === 'date' ? String(get('due') || '').trim() : '');
+  if (nextDue !== m.due) { m.due = nextDue; changes.push('due'); }
   ['client', 'title', 'counterparties', 'relatedParties', 'background', 'priority', 'startDate', 'totalFee', 'paymentsReceived', 'balance', 'contactName', 'contactEmail', 'area', 'stage', 'owner', 'nextOwner', 'status', 'due', 'waiting', 'lastContact', 'recurrence', 'recurrenceUntil', 'next', 'reason', 'notes'].forEach(f => {
+    if (f === 'due') return;
     let v;
     if (f === 'area' || f === 'stage' || f === 'waiting') {
       v = resolveCustom(get(f), get(f + 'Custom'));
@@ -3978,7 +4003,8 @@ function saveMatterFromDom(id) {
   if (!team.includes(m.owner)) team.push(m.owner);
   if (team.slice().sort().join() !== (m.team || []).slice().sort().join()) { m.team = team; changes.push('team'); }
 
-  if (!m.client || !m.title || !m.next || !m.due) { toast(t('toast.needClient')); return; }
+  if (!m.client || !m.title || !m.next) { toast(t('toast.needClient')); return; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(m.due || '')) { m.recurrence = 'none'; m.recurrenceUntil = ''; }
   if ((m.status === 'red' || m.status === 'yellow') && !String(L(m.reason) || '').trim()) { toast(t('toast.needReason')); return; }
   if (m.importStatusError) { m.importStatusError = false; changes.push('importStatusError'); }
 
