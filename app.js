@@ -3742,6 +3742,8 @@ function importMatterRows(rows) {
     waiting:['等待谁','等待对象','等待','waiting for','waiting on','waiting','pending from','en espera de','pendiente de','a la espera de'],
     next:['现在要做什么','当前步骤','下一步','下一步行动','当前任务','待办','next step','next steps','next action','current step','current action','next task','next','próximo paso','proximo paso','próxima acción','proxima accion','acción siguiente','accion siguiente','tarea siguiente'],
     owner:['负责人','经办人','主办人','承办人','owner','matter owner','assignee','assigned attorney','person responsible','responsable','encargado','a cargo'],
+    team:['成员','事项成员','团队成员','members','matter members','team members','miembros','miembros del asunto','miembros del equipo'],
+    nextOwner:['下一步负责人','下一步经办人','next step owner','next owner','next assignee','responsable del próximo paso','responsable del proximo paso','siguiente responsable'],
     background:['背景','案件背景','事项背景','background','case background','description','antecedentes','descripción','descripcion'],
     priority:['优先级','重要程度','priority','importance','prioridad'],
     startDate:['开始日期','启动日期','start date','opening date','fecha de inicio'],
@@ -3750,12 +3752,16 @@ function importMatterRows(rows) {
     balance:['余额','未收款','应收余额','balance','balance ($)','outstanding balance','saldo'],
     contactName:['联系人','客户联系人','contact name','contact person','persona de contacto'],
     contactEmail:['联系邮箱','联系人邮箱','contact email','email contact','correo de contacto'],
+    lastContact:['最后联系客户','最后联系','最后联系时间','last client contact','last contact','last contacted','último contacto','ultimo contacto'],
+    recurrence:['重复事项','重复规则','重复','recurrence','repeat','repeat rule','repetición','repeticion','regla de repetición','regla de repeticion'],
+    recurrenceUntil:['重复至','重复截止日期','repeat until','recurrence until','repetir hasta','repetición hasta','repeticion hasta'],
+    reason:['风险原因','原因','状态原因','risk reason','reason','status reason','motivo del riesgo','motivo','razón del estado','razon del estado'],
     notes:['备注','说明','notes','note','remarks','notas','observaciones'],
   };
   const val = (row, keys) => { const key = Object.keys(row).find(k => keys.some(a => k.trim().toLowerCase() === a.toLowerCase())); return key ? row[key] : ''; };
-  const requiredHeaders = ['client','title','next','due'];
+  const requiredHeaders = ['client','title','status','next'];
   const headersPresent = Object.keys(rows[0] || {}).map(k => k.trim().toLowerCase());
-  const headerAliases = { client:aliases.client, title:aliases.title, next:aliases.next, due:aliases.due };
+  const headerAliases = Object.fromEntries(requiredHeaders.map(name => [name, aliases[name]]));
   const validFormat = rows.length > 0 && requiredHeaders.every(name => headerAliases[name].some(alias => headersPresent.includes(alias.toLowerCase())));
   if (!validFormat) return { invalid:true, ok:0, bad:0, errors:[] };
   let ok = 0, bad = 0;
@@ -3770,15 +3776,23 @@ function importMatterRows(rows) {
     if (['asap','尽快','紧急','urgente'].includes(rawDueMode)) d.due = 'ASAP';
     if (['不设置','无','none','no due date','sin fecha límite','sin fecha limite'].includes(rawDueMode)) d.due = '';
     d.startDate = normalizeImportedDate(d.startDate) || d.startDate;
-    d.owner = USERS.find(u => u.name === d.owner || u.id === d.owner)?.id || currentUser().id;
-    d.nextOwner = d.owner;
+    d.lastContact = normalizeImportedDate(d.lastContact) || d.lastContact;
+    const member = value => USERS.find(u => [u.id,u.name,u.email].some(candidate => String(candidate||'').toLowerCase() === String(value||'').toLowerCase()));
+    d.owner = member(d.owner)?.id || currentUser().id;
+    d.nextOwner = member(d.nextOwner)?.id || d.owner;
+    d.team = String(d.team || '').split(/[,，;；|\n]/).map(name => member(name.trim())?.id).filter(Boolean);
+    const recurrence = String(d.recurrence || '').trim().toLowerCase();
+    d.recurrence = ['weekly','每周','semanal'].includes(recurrence) ? 'weekly'
+      : (['monthly','每月','mensual'].includes(recurrence) ? 'monthly' : 'none');
+    d.recurrenceUntil = normalizeImportedDate(d.recurrenceUntil) || '';
     const importedStatus = normalizeImportedStatus(val(row, aliases.status));
     if (!d.client) errors.push({ title: displayTitle, fieldKey: 'detail.client' });
     if (!d.title) errors.push({ title: displayTitle, fieldKey: 'detail.title' });
     if (!importedStatus) errors.push({ title: displayTitle, fieldKey: 'detail.status' });
+    if (!d.next) errors.push({ title: displayTitle, fieldKey: 'detail.next' });
     d.status = importedStatus || 'green';
     d.area = d.area || 'other'; d.stage = d.stage || STAGES[0]; d.waiting = d.waiting || 'none';
-    d.importStatusError = !importedStatus || !d.client || !d.title;
+    d.importStatusError = !importedStatus || !d.client || !d.title || !d.next;
     d.client = d.client || '—'; d.title = d.title || '—'; d.due = d.due || '';
     d.allowImportErrors = true;
     if ((d.counterparties || d.relatedParties) && potentialConflicts(d).length) {
@@ -3824,9 +3838,9 @@ function importSample(kind) {
     en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], required:[0], filename:'client-record-import-sample.xls' },
     es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], required:[0], filename:'ejemplo-importacion-clientes.xls' },
   } : {
-    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','截止方式','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], required:[0,1,4], filename:'事项导入示例.xls' },
-    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Due setting','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], required:[0,1,4], filename:'matter-import-sample.xls' },
-    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','Tipo de vencimiento','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], required:[0,1,4], filename:'ejemplo-importacion-asuntos.xls' },
+    zh: { heads:['客户','事项名称','对方当事人','关联方','业务类型','当前阶段','状态','截止日期','截止方式','等待谁','现在要做什么','负责人','事项成员','下一步负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','最后联系客户','重复事项','重复至','风险原因','备注'], required:[0,1,6,10], filename:'事项导入示例.xls' },
+    en: { heads:['Client','Matter name','Opposing parties','Related parties','Practice area','Stage','Status','Due date','Due setting','Waiting for','Next step','Owner','Matter members','Next step owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Last client contact','Recurrence','Repeat until','Risk reason','Notes'], required:[0,1,6,10], filename:'matter-import-sample.xls' },
+    es: { heads:['Cliente','Asunto','Contrapartes','Partes relacionadas','Área','Etapa','Estado','Fecha límite','Tipo de vencimiento','En espera de','Próximo paso','Responsable','Miembros del asunto','Responsable del próximo paso','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Último contacto','Repetición','Repetir hasta','Motivo del riesgo','Notas'], required:[0,1,6,10], filename:'ejemplo-importacion-asuntos.xls' },
   };
   return samples[lang] || samples.zh;
 }
