@@ -245,6 +245,15 @@ table.grid td.nw{white-space:nowrap}
 .kv .v{font-size:14px}
 .team-tags{display:flex;gap:6px;flex-wrap:wrap}
 .member-list{display:flex;flex-direction:column;gap:8px}
+.chat-members{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;color:var(--ink-2);font-size:13px}
+.chat-history{max-height:300px;overflow:auto;padding:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;margin-bottom:14px}
+.chat-message{max-width:85%;margin:0 0 10px}
+.chat-message.mine{margin-left:auto;text-align:right}
+.chat-message-meta{display:flex;gap:8px;align-items:center;color:var(--ink-2);font-size:12px;margin-bottom:3px}
+.chat-message.mine .chat-message-meta{justify-content:flex-end}
+.chat-message-body{display:inline-block;padding:8px 10px;border-radius:8px;background:#fff;border:1px solid var(--line);text-align:left;white-space:pre-wrap;word-break:break-word}
+.chat-message.mine .chat-message-body{background:#e8f0ff;border-color:#b9ccf5}
+.chat-empty{color:var(--ink-2);font-size:13px;text-align:center;padding:26px 8px}
 .member-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);
   border-radius:10px;background:#fbfcfe;cursor:pointer;font-size:14px;transition:.12s}
 .member-item:hover{border-color:#c9d6e6;background:#f4f8ff}

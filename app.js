@@ -765,7 +765,8 @@ const STR = {
   'modal.matterAction.work': ['在事项中工作', 'Work on matter', 'Trabajar en el asunto'],
   'modal.chat.title': ['事项聊天', 'Matter chat', 'Chat del asunto'],
   'modal.chat.to': ['发送给事项成员', 'Send to matter members', 'Enviar a los miembros del asunto'],
-  'modal.chat.noRecipients': ['这条事项没有其他可接收消息的成员。', 'This matter has no other members who can receive a message.', 'Este asunto no tiene otros miembros que puedan recibir el mensaje.'],
+  'modal.chat.members': ['群成员', 'Group members', 'Miembros del grupo'],
+  'modal.chat.empty': ['还没有消息，发一条开始聊天。', 'No messages yet. Start the conversation.', 'Aún no hay mensajes. Empieza la conversación.'],
   'modal.chat.message': ['消息', 'Message', 'Mensaje'],
   'modal.chat.placeholder': ['输入要发给事项成员的消息…', 'Type a message for the matter members…', 'Escribe un mensaje para los miembros del asunto…'],
   'modal.chat.send': ['发送消息', 'Send message', 'Enviar mensaje'],
@@ -3356,16 +3357,19 @@ async function removeEncryptedAttachment(id,index) {
 function modalChat(mo) {
   const m = matterById(mo.matterId);
   if (!m || !canSee(currentUser(), m)) return '';
-  const recipients = [...new Set([...(m.team || []), m.owner])]
-    .filter(id => id !== currentUser().id && USER[id]);
+  const members = [...new Set([...(m.team || []), m.owner])].filter(id => USER[id]);
+  const messages = logs.filter(l => String(l.matterId) === String(m.id) && l.key === 'detail.entry.chat')
+    .sort((a, b) => a.at - b.at);
+  const history = messages.length ? messages.map(l => `
+    <div class="chat-message ${l.by === currentUser().id ? 'mine' : ''}">
+      <div class="chat-message-meta"><b>${esc((USER[l.by] || {}).name || l.by)}</b><span>${esc(fmtStamp(l.at))}</span></div>
+      <div class="chat-message-body">${esc(L(l.vars && l.vars.message || ''))}</div>
+    </div>`).join('') : `<div class="chat-empty">${esc(t('modal.chat.empty'))}</div>`;
   return modalFrame(
     t('modal.chat.title') + ' · ' + L(m.title),
     `<form id="chat-form" data-action="send-chat" data-id="${m.id}">
-       <div class="field"><label>${esc(t('modal.chat.to'))}</label>
-         <div class="member-list chat-recipients">${recipients.length ? recipients.map(id => `<label class="member-item">
-           <input type="checkbox" name="chatTo" value="${esc(id)}" checked>
-           <span class="nm">${esc(USER[id].name)}</span>
-         </label>`).join('') : `<div class="hint">${esc(t('modal.chat.noRecipients'))}</div>`}</div></div>
+       <div class="chat-members"><span>${esc(t('modal.chat.members'))}</span>${members.map(id => `<span class="tag">${esc(USER[id].name)}</span>`).join('')}</div>
+       <div class="chat-history" aria-live="polite">${history}</div>
        <div class="field"><label class="req">${esc(t('modal.chat.message'))}</label>
          <textarea name="message" rows="5" placeholder="${esc(t('modal.chat.placeholder'))}" autocomplete="off"></textarea></div>
      </form>`,
@@ -5047,10 +5051,9 @@ document.addEventListener('submit', async ev => {
     const id = form.getAttribute('data-id');
     const m = matterById(id);
     const message = String((form.message && form.message.value) || '').trim();
-    const recipients = [...form.querySelectorAll('input[name="chatTo"]:checked')].map(x => x.value);
+    const recipients = [...new Set([...(m.team || []), m.owner])].filter(memberId => memberId !== currentUser().id && USER[memberId]);
     if (!m || !canSee(currentUser(), m)) return;
     if (!message) { toast(t('toast.needMessage')); return; }
-    if (!recipients.length) { toast(t('toast.needChatRecipient')); return; }
     addLogKey(id, currentUser().id, 'detail.entry.chat', { message }, {
       key: 'inbox.chat', vars: noticeVars(m, currentUser().id, { message }), to: recipients,
     });
