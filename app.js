@@ -33,7 +33,7 @@ const SUPABASE = {
 };
 const LOCAL_TEST_MODE = !!(globalThis.LCBRuntimeMode && LCBRuntimeMode.isLocalTestHost(location.hostname));
 const REMOTE_ENABLED = !LOCAL_TEST_MODE && !!(SUPABASE.url && SUPABASE.key) && typeof fetch === 'function';
-const SYNC_EVERY_MS = 15000;
+const SYNC_EVERY_MS = 10000;
 const IDLE_LOGOUT_MS = 24 * 60 * 60 * 1000;
 const LOGIN_FAILURE_LIMIT = 5;
 const LOGIN_COOLDOWN_MS = 5 * 60 * 1000;
