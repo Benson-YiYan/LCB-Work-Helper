@@ -240,6 +240,10 @@ const TUTORIAL_DETAILS = {
   ],
 };
 
+TUTORIAL_DETAILS.zh[1][5] = '新建和修改事项可填写背景、优先级、开始日期、费用、收款、余额、联系人、联系邮箱、备注及原有工作流和权限字段；保存会加密同步，删除会移入回收站。';
+TUTORIAL_DETAILS.en[1][3] = 'Editing includes background, priority, start date, fees, payments, balance, contacts, notes, and the existing workflow and permission fields. Save syncs; Delete moves to trash.';
+TUTORIAL_DETAILS.es[1][3] = 'La edición incluye antecedentes, prioridad, fecha inicial, honorarios, pagos, saldo, contactos, notas y los campos existentes de flujo y permisos. Guardar sincroniza; Eliminar envía a la papelera.';
+
 BEGINNER_TUTORIAL.zh.steps.splice(1,0,['全文搜索','搜索事项、客户、聊天、动态和文件名；结果严格按当前账号权限显示。']);
 BEGINNER_TUTORIAL.en.steps.splice(1,0,['Full search','Search matters, clients, chats, activity, and filenames; results follow the current account permissions.']);
 BEGINNER_TUTORIAL.es.steps.splice(1,0,['Búsqueda completa','Busca asuntos, clientes, chats, actividad y archivos; los resultados respetan los permisos actuales.']);
@@ -380,7 +384,7 @@ const STR = {
   'list.bulkDelete': ['批量删除', 'Bulk delete', 'Eliminar en lote'],
   'list.import': ['Excel/CSV导入', 'Import Excel/CSV', 'Importar Excel/CSV'],
   'modal.import.title': ['Excel/CSV导入事项', 'Import matters from Excel/CSV', 'Importar asuntos desde Excel/CSV'],
-  'modal.import.hint': ['支持同时选择多个文件。第一行必须是表头。支持：客户、事项名称、业务类型、当前阶段、状态、截止日期、等待谁、现在要做什么、负责人。', 'You can select multiple files. The first row must contain headers. Supported: client, matter name, practice area, stage, status, due date, waiting for, next step, owner.', 'Puedes seleccionar varios archivos. La primera fila debe contener encabezados. Compatible con cliente, asunto, área, etapa, estado, fecha límite, espera, próximo paso y responsable.'],
+  'modal.import.hint': ['支持同时选择多个文件。第一行必须是表头。支持事项基本信息、背景、优先级、开始日期、费用与收款、联系人和备注；常见近义表头也能识别。', 'You can select multiple files. The first row must contain headers. Matter details, background, priority, start date, fees and payments, contacts, and notes are supported, including common header synonyms.', 'Puedes seleccionar varios archivos. La primera fila debe contener encabezados. Se admiten datos del asunto, antecedentes, prioridad, fecha de inicio, honorarios y pagos, contactos y notas, incluidos sinónimos habituales.'],
   'modal.import.choose': ['选择 .xlsx、.xls 或 .csv 文件', 'Choose .xlsx, .xls, or .csv files', 'Elige archivos .xlsx, .xls o .csv'],
   'modal.import.confirm': ['导入事项', 'Import matters', 'Importar asuntos'],
   'modal.import.importing': ['导入中…', 'Importing…', 'Importando…'],
@@ -528,6 +532,14 @@ const STR = {
   'detail.reason': ['状态说明（黄／红必填）', 'Status note (required for yellow / red)', 'Nota de estado (obligatoria si es amarillo o rojo)'],
   'detail.reasonPh': ['例如：等墨方土地意见，客户在催', 'e.g. Waiting for the Mexico land-use opinion; the client is following up', 'p. ej. A la espera del dictamen sobre el terreno en México; el cliente está dando seguimiento'],
   'form.reasonPh': ['为什么急', 'Why is it urgent?', '¿Por qué es urgente?'],
+  'detail.background': ['背景', 'Background', 'Antecedentes'],
+  'detail.priority': ['优先级', 'Priority', 'Prioridad'],
+  'detail.startDate': ['开始日期', 'Start date', 'Fecha de inicio'],
+  'detail.totalFee': ['费用总额', 'Total fee', 'Honorarios totales'],
+  'detail.paymentsReceived': ['已收款', 'Payments received', 'Pagos recibidos'],
+  'detail.balance': ['余额', 'Balance', 'Saldo'],
+  'detail.contactName': ['联系人', 'Contact name', 'Persona de contacto'],
+  'detail.contactEmail': ['联系邮箱', 'Contact email', 'Correo de contacto'],
   'detail.notes': ['备注', 'Notes', 'Notas'],
   'detail.members': ['项目成员', 'Matter members', 'Miembros del asunto'],
   'detail.membersHint': ['只有勾进来的人能打开这条事项，没勾的人连列表里都看不到。Carol 始终能看到全部。负责人是唯一对结果负责的人。',
@@ -913,6 +925,14 @@ const STR = {
   'csv.due': ['截止日期', 'Due date', 'Fecha límite'],
   'csv.waiting': ['等待谁', 'Waiting for', 'Esperando a'],
   'csv.lastContact': ['最后联系客户', 'Last client contact', 'Último contacto'],
+  'csv.background': ['背景', 'Background', 'Antecedentes'],
+  'csv.priority': ['优先级', 'Priority', 'Prioridad'],
+  'csv.startDate': ['开始日期', 'Start date', 'Fecha de inicio'],
+  'csv.totalFee': ['费用总额', 'Total fee', 'Honorarios totales'],
+  'csv.paymentsReceived': ['已收款', 'Payments received', 'Pagos recibidos'],
+  'csv.balance': ['余额', 'Balance', 'Saldo'],
+  'csv.contactName': ['联系人', 'Contact name', 'Persona de contacto'],
+  'csv.contactEmail': ['联系邮箱', 'Contact email', 'Correo de contacto'],
   'csv.notes': ['备注', 'Notes', 'Notas'],
   'csv.reason': ['状态说明', 'Status note', 'Nota de estado'],
 
@@ -1820,7 +1840,7 @@ function lastStep(m) {
   const list = stepsOf(m);
   return list.length ? list[0] : null;
 }
-const MATTER_EDIT_FIELDS = ['client', 'title', 'counterparties', 'relatedParties', 'area', 'stage', 'owner', 'nextOwner', 'status', 'due', 'waiting', 'lastContact', 'next', 'reason', 'notes', 'team', 'recurrence', 'recurrenceUntil', 'recurrenceNext', 'handoff'];
+const MATTER_EDIT_FIELDS = ['client', 'title', 'counterparties', 'relatedParties', 'background', 'priority', 'startDate', 'totalFee', 'paymentsReceived', 'balance', 'contactName', 'contactEmail', 'area', 'stage', 'owner', 'nextOwner', 'status', 'due', 'waiting', 'lastContact', 'next', 'reason', 'notes', 'team', 'recurrence', 'recurrenceUntil', 'recurrenceNext', 'handoff'];
 function cloneData(value) { return JSON.parse(JSON.stringify(value)); }
 function matterEditSnapshot(m) {
   const snapshot = {};
@@ -2817,6 +2837,13 @@ function viewMatter(id,mode) {
             <div class="field"><label>${esc(t('detail.title'))}</label><input data-field="title" value="${esc(L(m.title))}"></div>
             <div class="field"><label>${esc(t('detail.counterparties'))}</label><input data-field="counterparties" value="${esc(m.counterparties || '')}"></div>
             <div class="field"><label>${esc(t('detail.relatedParties'))}</label><input data-field="relatedParties" value="${esc(m.relatedParties || '')}"></div>
+            <div class="field"><label>${esc(t('detail.priority'))}</label><input data-field="priority" value="${esc(m.priority || '')}"></div>
+            <div class="field"><label>${esc(t('detail.startDate'))}</label><input type="date" data-field="startDate" value="${esc(String(m.startDate || '').slice(0,10))}"></div>
+            <div class="field"><label>${esc(t('detail.totalFee'))}</label><input data-field="totalFee" value="${esc(m.totalFee || '')}"></div>
+            <div class="field"><label>${esc(t('detail.paymentsReceived'))}</label><input data-field="paymentsReceived" value="${esc(m.paymentsReceived || '')}"></div>
+            <div class="field"><label>${esc(t('detail.balance'))}</label><input data-field="balance" value="${esc(m.balance || '')}"></div>
+            <div class="field"><label>${esc(t('detail.contactName'))}</label><input data-field="contactName" value="${esc(m.contactName || '')}"></div>
+            <div class="field"><label>${esc(t('detail.contactEmail'))}</label><input data-field="contactEmail" value="${esc(m.contactEmail || '')}"></div>
             <div class="field"><label>${esc(t('detail.area'))}</label>${areaField}
               <div class="hint">${esc(t('detail.areaHint'))}</div></div>
             <div class="field"><label>${esc(t('detail.stage'))}</label>${stageField}</div>
@@ -2829,6 +2856,7 @@ function viewMatter(id,mode) {
             <div class="field"><label>${esc(ft('recurrence'))}</label><select data-field="recurrence">${recurrenceOpts}</select></div>
             <div class="field"><label>${esc(ft('recurrenceUntil'))}</label><input type="date" data-field="recurrenceUntil" value="${esc(m.recurrenceUntil || '')}"></div>
           </div>
+          <div class="field"><label>${esc(t('detail.background'))}</label><textarea data-field="background" rows="4">${esc(m.background || '')}</textarea></div>
           <div class="field"><label>${esc(t('detail.next'))}</label><input data-field="next" value="${esc(L(m.next))}"></div>
           <div class="field"><label>${esc(t('detail.reason'))}</label><input data-field="reason" value="${esc(L(m.reason))}" placeholder="${esc(t('detail.reasonPh'))}"></div>
           <div class="field"><label>${esc(t('detail.notes'))}</label><textarea data-field="notes" rows="3">${esc(L(m.notes))}</textarea></div>
@@ -3415,6 +3443,13 @@ function modalNewMatter() {
             <div class="field"><label class="req">${esc(t('detail.title'))}</label><input name="title" required></div>
             <div class="field"><label>${esc(t('detail.counterparties'))}</label><input name="counterparties"></div>
             <div class="field"><label>${esc(t('detail.relatedParties'))}</label><input name="relatedParties"></div>
+            <div class="field"><label>${esc(t('detail.priority'))}</label><input name="priority"></div>
+            <div class="field"><label>${esc(t('detail.startDate'))}</label><input type="date" name="startDate"></div>
+            <div class="field"><label>${esc(t('detail.totalFee'))}</label><input name="totalFee"></div>
+            <div class="field"><label>${esc(t('detail.paymentsReceived'))}</label><input name="paymentsReceived"></div>
+            <div class="field"><label>${esc(t('detail.balance'))}</label><input name="balance"></div>
+            <div class="field"><label>${esc(t('detail.contactName'))}</label><input name="contactName"></div>
+            <div class="field"><label>${esc(t('detail.contactEmail'))}</label><input name="contactEmail"></div>
             <div class="field"><label class="req">${esc(t('detail.area'))}</label>${areaField}</div>
             <div class="field"><label class="req">${esc(t('detail.owner'))}</label><select name="owner">${ownerOpts}</select></div>
             <div class="field"><label class="req">${esc(t('detail.stage'))}</label>${stageField}</div>
@@ -3424,10 +3459,12 @@ function modalNewMatter() {
             <div class="field"><label>${esc(ft('recurrence'))}</label><select name="recurrence"><option value="none">${esc(ft('recurrenceNone'))}</option><option value="weekly">${esc(ft('recurrenceWeekly'))}</option><option value="monthly">${esc(ft('recurrenceMonthly'))}</option></select></div>
             <div class="field"><label>${esc(ft('recurrenceUntil'))}</label><input type="date" name="recurrenceUntil"></div>
           </div>
+          <div class="field"><label>${esc(t('detail.background'))}</label><textarea name="background" rows="4"></textarea></div>
           <div class="field"><label class="req">${esc(t('detail.next'))}</label><input name="next" required></div>
           <div class="field"><label>${esc(t('detail.nextOwner'))}</label><select name="nextOwner">${nextOwnerOpts}</select></div>
           <div class="field"><label>${esc(t('detail.reason'))}</label>
             <input name="reason" autocomplete="off" value="" placeholder="${esc(t('form.reasonPh'))}"></div>
+          <div class="field"><label>${esc(t('detail.notes'))}</label><textarea name="notes" rows="3"></textarea></div>
           <div class="field"><label>${esc(t('detail.members'))}</label>
             <div class="member-list">
               ${USERS.map(u => `<label class="member-item">
@@ -3671,14 +3708,23 @@ function importMatterRows(rows) {
     client:['客户','客户名称','委托人','client','client name','customer','cliente','nombre del cliente'],
     counterparties:['对方当事人','对方','对手方','opposing parties','opposing party','counterparties','counterparty','contrapartes','contraparte','parte contraria'],
     relatedParties:['关联方','关联主体','关联公司','related parties','related party','related entities','related companies','partes relacionadas','partes vinculadas','empresas relacionadas'],
-    title:['事项名称','事项','事项标题','案件名称','项目名称','matter name','matter title','matter','title','case name','case title','asunto','nombre del asunto','nombre del caso'],
+    title:['事项名称','事项','事项标题','案件名称','项目名称','matter name','matter title','matter','title','case name','case title','case type','asunto','nombre del asunto','nombre del caso'],
     area:['业务类型','业务领域','案件类型','领域','practice area','practice','matter type','legal area','area','área','área de práctica','area de practica','tipo de asunto'],
     stage:['当前阶段','阶段','进度','stage','current stage','phase','etapa','etapa actual','fase'],
     status:['状态','事项状态','status','matter status','estado','estatus','situación','situacion'],
     due:['截止日期','截止','到期日','截止时间','期限','due date','due','deadline','expiry date','fecha límite','fecha limite','fecha de vencimiento','plazo'],
     waiting:['等待谁','等待对象','等待','waiting for','waiting on','waiting','pending from','en espera de','pendiente de','a la espera de'],
-    next:['现在要做什么','当前步骤','下一步','下一步行动','当前任务','待办','next step','next action','current step','current action','next task','next','próximo paso','proximo paso','próxima acción','proxima accion','acción siguiente','accion siguiente','tarea siguiente'],
-    owner:['负责人','经办人','主办人','承办人','owner','matter owner','assignee','person responsible','responsable','encargado','a cargo'],
+    next:['现在要做什么','当前步骤','下一步','下一步行动','当前任务','待办','next step','next steps','next action','current step','current action','next task','next','próximo paso','proximo paso','próxima acción','proxima accion','acción siguiente','accion siguiente','tarea siguiente'],
+    owner:['负责人','经办人','主办人','承办人','owner','matter owner','assignee','assigned attorney','person responsible','responsable','encargado','a cargo'],
+    background:['背景','案件背景','事项背景','background','case background','description','antecedentes','descripción','descripcion'],
+    priority:['优先级','重要程度','priority','importance','prioridad'],
+    startDate:['开始日期','启动日期','start date','opening date','fecha de inicio'],
+    totalFee:['费用总额','总费用','律师费','total fee','total fee ($)','fees','honorarios totales'],
+    paymentsReceived:['已收款','已付款','收款金额','payments received','payments received ($)','amount received','pagos recibidos'],
+    balance:['余额','未收款','应收余额','balance','balance ($)','outstanding balance','saldo'],
+    contactName:['联系人','客户联系人','contact name','contact person','persona de contacto'],
+    contactEmail:['联系邮箱','联系人邮箱','contact email','email contact','correo de contacto'],
+    notes:['备注','说明','notes','note','remarks','notas','observaciones'],
   };
   const val = (row, keys) => { const key = Object.keys(row).find(k => keys.some(a => k.trim().toLowerCase() === a.toLowerCase())); return key ? row[key] : ''; };
   const requiredHeaders = ['client','title','next','due'];
@@ -3694,6 +3740,7 @@ function importMatterRows(rows) {
     const displayTitle = d.title || d.client || '—';
     const rawDue = String(val(row, aliases.due) ?? '').trim();
     d.due = normalizeImportedDate(rawDue);
+    d.startDate = normalizeImportedDate(d.startDate) || d.startDate;
     d.owner = USERS.find(u => u.name === d.owner || u.id === d.owner)?.id || currentUser().id;
     d.nextOwner = d.owner;
     const importedStatus = normalizeImportedStatus(val(row, aliases.status));
@@ -3750,9 +3797,9 @@ function importSample(kind) {
     en: { heads:['Client name','Contact person','Phone','Email','Communication progress','Last contact','Notes','Contacts','Related parties'], filename:'client-record-import-sample.csv' },
     es: { heads:['Nombre del cliente','Persona de contacto','Teléfono','Correo electrónico','Progreso de comunicación','Último contacto','Notas','Contactos','Partes relacionadas'], filename:'ejemplo-importacion-clientes.csv' },
   } : {
-    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','等待谁','现在要做什么','负责人'], filename:'事项导入示例.csv' },
-    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Waiting for','Next step','Owner'], filename:'matter-import-sample.csv' },
-    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','En espera de','Próximo paso','Responsable'], filename:'ejemplo-importacion-asuntos.csv' },
+    zh: { heads:['客户','事项名称','业务类型','当前阶段','状态','截止日期','等待谁','现在要做什么','负责人','背景','优先级','开始日期','费用总额','已收款','余额','联系人','联系邮箱','备注'], filename:'事项导入示例.csv' },
+    en: { heads:['Client','Matter name','Practice area','Stage','Status','Due date','Waiting for','Next step','Owner','Background','Priority','Start date','Total fee','Payments received','Balance','Contact name','Contact email','Notes'], filename:'matter-import-sample.csv' },
+    es: { heads:['Cliente','Asunto','Área','Etapa','Estado','Fecha límite','En espera de','Próximo paso','Responsable','Antecedentes','Prioridad','Fecha de inicio','Honorarios totales','Pagos recibidos','Saldo','Persona de contacto','Correo de contacto','Notas'], filename:'ejemplo-importacion-asuntos.csv' },
   };
   return samples[lang] || samples.zh;
 }
@@ -3822,13 +3869,17 @@ function createMatter(data) {
     id, no: `2026-${String(id).padStart(3, '0')}`,
     client: data.client, title: data.title, area,
     counterparties:String(data.counterparties || '').trim(), relatedParties:String(data.relatedParties || '').trim(),
+    background:String(data.background || '').trim(), priority:String(data.priority || '').trim(),
+    startDate:String(data.startDate || '').trim(), totalFee:String(data.totalFee || '').trim(),
+    paymentsReceived:String(data.paymentsReceived || '').trim(), balance:String(data.balance || '').trim(),
+    contactName:String(data.contactName || '').trim(), contactEmail:String(data.contactEmail || '').trim(),
     owner: data.owner, team,
     stage: stage || STAGES[0], status: data.status, reason: data.reason || '',
     next: data.next, nextOwner: data.nextOwner || data.owner,
     due: data.due, waiting: waiting || 'none',
     recurrence: data.recurrence || 'none', recurrenceUntil: data.recurrenceUntil || '',
     importStatusError: !!data.importStatusError,
-    files: [], lastContact: iso(today()), notes: '',
+    files: [], lastContact: data.lastContact || iso(today()), notes: String(data.notes || '').trim(),
   };
   if (m.recurrence !== 'none') m.recurrenceNext = advanceRecurringDate(m.due, m.recurrence);
   if (!m.team.includes(m.owner)) m.team.push(m.owner);
@@ -3889,7 +3940,10 @@ function saveMatterFromDom(id) {
   const beforeSnapshot = matterEditSnapshot(m);
   // 表单里显示的是当前语言的文字；如果用户没改，就保留原来的多语言数据
   const shown = {
-    client: L(m.client), title: L(m.title), counterparties:m.counterparties || '', relatedParties:m.relatedParties || '', next: L(m.next), reason: L(m.reason), notes: L(m.notes),
+    client: L(m.client), title: L(m.title), counterparties:m.counterparties || '', relatedParties:m.relatedParties || '',
+    background:m.background || '', priority:m.priority || '', startDate:String(m.startDate || '').slice(0,10),
+    totalFee:m.totalFee || '', paymentsReceived:m.paymentsReceived || '', balance:m.balance || '',
+    contactName:m.contactName || '', contactEmail:m.contactEmail || '', next: L(m.next), reason: L(m.reason), notes: L(m.notes),
     area: m.area, stage: m.stage, owner: m.owner, nextOwner: m.nextOwner, status: m.status,
     due: m.due, waiting: m.waiting, lastContact: String(m.lastContact || '').slice(0, 10),
     recurrence: m.recurrence || 'none', recurrenceUntil: m.recurrenceUntil || '',
@@ -3901,7 +3955,7 @@ function saveMatterFromDom(id) {
       (get('waiting') === '__custom__' && !String(get('waitingCustom') || '').trim())) {
     toast(t('toast.needCustom')); return;
   }
-  ['client', 'title', 'counterparties', 'relatedParties', 'area', 'stage', 'owner', 'nextOwner', 'status', 'due', 'waiting', 'lastContact', 'recurrence', 'recurrenceUntil', 'next', 'reason', 'notes'].forEach(f => {
+  ['client', 'title', 'counterparties', 'relatedParties', 'background', 'priority', 'startDate', 'totalFee', 'paymentsReceived', 'balance', 'contactName', 'contactEmail', 'area', 'stage', 'owner', 'nextOwner', 'status', 'due', 'waiting', 'lastContact', 'recurrence', 'recurrenceUntil', 'next', 'reason', 'notes'].forEach(f => {
     let v;
     if (f === 'area' || f === 'stage' || f === 'waiting') {
       v = resolveCustom(get(f), get(f + 'Custom'));
@@ -3947,11 +4001,13 @@ function exportCSV(onlyId) {
   const u = currentUser();
   const list = onlyId ? [matterById(onlyId)].filter(Boolean) : sorted(filterMatters());
   const head = ['csv.no', 'csv.client', 'csv.counterparties', 'csv.relatedParties', 'csv.title', 'csv.area', 'csv.owner', 'csv.status', 'csv.stage',
-    'csv.next', 'csv.nextOwner', 'csv.due', 'csv.waiting', 'csv.lastContact', 'csv.notes'].map(k => t(k));
+    'csv.next', 'csv.nextOwner', 'csv.due', 'csv.waiting', 'csv.lastContact', 'csv.background', 'csv.priority', 'csv.startDate',
+    'csv.totalFee', 'csv.paymentsReceived', 'csv.balance', 'csv.contactName', 'csv.contactEmail', 'csv.notes'].map(k => t(k));
   const rows = list.map(m => [
     m.no, L(m.client), m.counterparties || '', m.relatedParties || '', L(m.title), areaName(m.area), USER[m.owner].name,
     statusName(m.status), stageLabel(m.stage), L(m.next), USER[m.nextOwner] ? USER[m.nextOwner].name : m.nextOwner,
-    m.due, waitLabel(m.waiting), m.lastContact, L(m.notes),
+    m.due, waitLabel(m.waiting), m.lastContact, m.background || '', m.priority || '', m.startDate || '',
+    m.totalFee || '', m.paymentsReceived || '', m.balance || '', m.contactName || '', m.contactEmail || '', L(m.notes),
   ]);
   if (onlyId) { head.push(t('csv.reason')); rows[0].push(L(matterById(onlyId).reason)); }
   const csv = '\ufeff' + [head, ...rows].map(r => r.map(csvCell).join(',')).join('\n');
