@@ -34,4 +34,4 @@ jobs:
           jq -e '.disable_signup == true and .external.anonymous_users == false' settings.json >/dev/null
           code=$(curl -sS -o body -w '%{http_code}' "$base/auth/v1/signup" -H "apikey: $key" -H 'Content-Type: application/json' --data '{"email":"security-probe-invalid@example.invalid","password":"NotARealPassword-9081726354"}')
           test "$code" = 400 && grep -qi captcha body
-          test "$(curl -fsSL https://benson-yiyan.github.io/LCB-Work-Helper/vendor/xlsx.full.min.js | sha256sum | cut -d' ' -f1)" = 'cc015130aa8521e7f088f88898eba949ccdcbfb38df0bd129b44b7273c3a6f41'
+          test "$(curl -fsSL https://benson-yiyan.github.io/LCB-Work-Hub/vendor/xlsx.full.min.js | sha256sum | cut -d' ' -f1)" = 'cc015130aa8521e7f088f88898eba949ccdcbfb38df0bd129b44b7273c3a6f41'
